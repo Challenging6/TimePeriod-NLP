@@ -1,0 +1,9 @@
+*.classpath
+.project
+.settings
+*.prefs
+.svn/entries
+.svn/format
+*.svn-base
+.svn/wc.db
+target
