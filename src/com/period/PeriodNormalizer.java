@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,14 +22,23 @@ import java.util.regex.Pattern;
  **/
 public class PeriodNormalizer {
 
+    private static final String[] REGEX_FILES = new String[] {  //正则文件
+            "/period0.txt",
+            "/period1.txt",
+            "/period2.txt",
+            "/period3.txt",
+    };
 
-    private PeriodUnit[] periods;
-    private TimeUnit[] times;
-    private static Pattern patterns = null;
+    public List<PeriodUnit> periods;
+    private List<TimeUnit> times;
+    private static List<Pattern> patterns = null;
+    private TimeNormalizer timeNormalizer;
+
 
     public PeriodNormalizer(){
         try {
-            patterns = readModel();
+            patterns =readModel();
+            periods = new ArrayList<>();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -37,14 +47,18 @@ public class PeriodNormalizer {
 
     public void parse(String target) throws URISyntaxException {
 
+        periods = new ArrayList<>();
+
         times = parseTime(target);
 
         //需要保持和time包预处理的结果相同，用来定位时间
         target = preHandling(target);
+        System.out.println("Parsing: "+target);
+
 
         //先对时间进行抽取， 再对相应位置进行替换，方便后边正则匹配。
         String maskStr = maskTime(target);
-        periodExtract(maskStr);
+        periodExtract(maskStr, target);
 
 
     }
@@ -56,16 +70,177 @@ public class PeriodNormalizer {
     * @return
     * @description  抽取时间段
      */
-    private void periodExtract(String maskStr){
+    private void periodExtract(String maskStr, String originStr){
+
+        oneTimeToNowExtract(maskStr, originStr, patterns.get(0), patterns.get(3));
+        twoTimeExtract(maskStr, patterns.get(1));
+        oneTimePastExtract(maskStr, patterns.get(2));
+
+
+    }
+
+    /**
+    * @author LinZheng Chai
+    * @date 2019/6/4 11:20
+    * @param
+    * @return
+    * @description 双时间点类型抽取
+     */
+    private void twoTimeExtract(String maskStr, Pattern pattern){
         Matcher matcher;
-        int startLine = -1, endLine = -1;
-        matcher = patterns.matcher(maskStr);
-        System.out.println("patterns: "+ patterns);
-        System.out.println("Str: "+ maskStr);
+
+        matcher = pattern.matcher(maskStr);
+        //System.out.println("patterns: "+ pattern);
+        //System.out.println("Str: "+ maskStr);
         while (matcher.find()){
-            startLine = matcher.start();
-            System.out.println(matcher.group());
-            
+
+            List<String> timeMarks = new ArrayList<>();
+            for (int i = 1; i <= matcher.groupCount(); i++){
+                //System.out.println(i+" "+matcher.group(i));
+                if (matcher.group(i)!=null){
+                    timeMarks.add(matcher.group(i));
+                }
+            }
+            if (timeMarks.size()!=1+2){
+                System.out.println("时间匹配异常!,匹到的时间个数有错误");
+            }else {
+                int no1, no2;
+                no1 = Integer.valueOf(timeMarks.get(1));
+                no2 = Integer.valueOf(timeMarks.get(2));
+                TimeUnit time1 = times.get(no1);
+                TimeUnit time2 = times.get(no2);
+                if (time1 != null && time2 != null) {
+                   // System.out.println(time1.Time_Expression);
+                   // System.out.println(time2.Time_Expression);
+                    PeriodUnit period = new PeriodUnit(time1, time2);
+                    //System.out.println(period);
+                    periods.add(period);
+
+                    times.set(no1, null);
+                    times.set(no2, null);
+                }
+            }
+        }
+    }
+
+
+    /**
+    * @author LinZheng Chai
+    * @date 2019/6/4 11:26
+    * @param
+    * @return
+    * @description 过去的单时间点, (昨天的, 上个月的)
+     */
+    private void oneTimePastExtract(String maskStr, Pattern pattern){
+        Matcher matcher;
+        matcher = pattern.matcher(maskStr);
+        //System.out.println("patterns: "+ pattern);
+        //System.out.println("Str: "+ maskStr);
+        while (matcher.find()){
+
+            List<String> timeMarks = new ArrayList<>();
+            for (int i = 1; i <= matcher.groupCount(); i++){
+                //System.out.println(i+" "+matcher.group(i));
+                if (matcher.group(i)!=null){
+                    timeMarks.add(matcher.group(i));
+                }
+            }
+            if (timeMarks.size()!=1+1){
+                System.out.println("时间匹配异常!,匹到的时间个数有错误");
+            }else {
+                int no1;
+                no1 = Integer.valueOf(timeMarks.get(1));
+                TimeUnit time1 = times.get(no1);
+
+                if (time1 != null) {
+                    //System.out.println(time1.Time_Norm);
+
+                    PeriodUnit period = new PeriodUnit(
+                            time1, timeNormalizer, false
+                    );
+
+                    //System.out.println(time1.Time_Expression+": "+period);
+
+                    periods.add(period);
+                    times.set(no1, null);
+                }
+            }
+        }
+    }
+
+    /**
+     * @author LinZheng Chai
+     * @date 2019/6/4 11:26
+     * @param
+     * @return
+     * @description 过去的单时间点至今 (最近五月)
+     */
+    private void oneTimeToNowExtract(String maskStr, String originStr,
+                                     Pattern pattern1, Pattern pattern2){
+        /**
+         *先匹配不需要时间抽取的(近5年,近3月, 近一周)
+         */
+
+        Matcher matcher;
+        matcher = pattern1.matcher(originStr);
+        //System.out.println("patterns: "+ pattern1);
+        //System.out.println("Str: "+ maskStr);
+        while (matcher.find()) {
+            List<String> timeMarks = new ArrayList<>();
+            for (int i = 1; i <= matcher.groupCount(); i++) {
+                //System.out.println(i+" "+matcher.group(i));
+                if (matcher.group(i) != null) {
+                    timeMarks.add(matcher.group(i));
+                }
+            }
+            if (timeMarks.size() != 1 + 2) {
+                System.out.println("匹配异常!");
+            } else {
+                int timeLen;
+                timeLen = Integer.valueOf(timeMarks.get(1));
+
+
+              PeriodUnit period = new PeriodUnit(
+                       timeLen,
+                       timeMarks.get(2),
+                       timeNormalizer
+              );
+                periods.add(period);
+
+            }
+        }
+        /**
+         * 匹配需要时间抽取的(去年至今, 4月以来)
+         */
+
+        matcher = pattern2.matcher(maskStr);
+        //System.out.println("patterns: "+ pattern);
+        //System.out.println("Str: "+ maskStr);
+        while (matcher.find()){
+            List<String> timeMarks = new ArrayList<>();
+            for (int i = 1; i <= matcher.groupCount(); i++){
+                //System.out.println(i+" "+matcher.group(i));
+                if (matcher.group(i)!=null){
+                    timeMarks.add(matcher.group(i));
+                }
+            }
+            if (timeMarks.size()!=1+1){
+                System.out.println("时间匹配异常! 匹到的时间个数有错误");
+            }else {
+                int no1;
+                no1 = Integer.valueOf(timeMarks.get(1));
+                TimeUnit time1 = times.get(no1);
+                if (time1 != null) {
+                    //System.out.println(time1.Time_Norm);
+
+                    PeriodUnit period = new PeriodUnit(
+                            time1, timeNormalizer, true
+                    );
+                    //System.out.println(time1.Time_Expression+": "+period);
+                    periods.add(period);
+                    times.set(no1, null);
+                }
+            }
         }
     }
 
@@ -77,12 +252,13 @@ public class PeriodNormalizer {
     * @return
     * @description 进行时间抽取
      */
-    private TimeUnit[] parseTime(String target) throws URISyntaxException {
+    private List<TimeUnit> parseTime(String target) throws URISyntaxException {
         URL url = TimeNormalizer.class.getResource("/TimeExp.m");
-        System.out.println(url.toURI().toString());
-        TimeNormalizer timeNormalizer = new TimeNormalizer(url.toURI().toString());
+        //System.out.println(url.toURI().toString());
+        timeNormalizer = new TimeNormalizer(url.toURI().toString());
         //timeNormalizer.setPreferFuture(true);
-        return timeNormalizer.parse(target);
+        TimeUnit[] temp = timeNormalizer.parse(target);
+        return new ArrayList<>(Arrays.asList(temp));
     }
 
     /**
@@ -114,8 +290,8 @@ public class PeriodNormalizer {
         int timeStart;
         int timeEnd;
         String maskStr = target;
-        for (int i = 1; i <= times.length; i++){
-            time = times[i-1];
+        for (int i = 0; i < times.size(); i++){
+            time = times.get(i);
             timeExp = time.Time_Expression;
             timeStart = maskStr.indexOf(timeExp);
             timeEnd = timeStart+timeExp.length()-1;
@@ -133,19 +309,15 @@ public class PeriodNormalizer {
     * @return
     * @description 读取正则模型, 返回所有正则表达式的拼接
      */
-    private Pattern readModel(){
-        String[] files = new String[] {
-                "/period1.txt",
-                "/period2.txt",
-        };
-        List<String> regexArr = new ArrayList<>();
+    private List<Pattern> readModel(){
 
-        for (String file : files){
+        List<Pattern> regexArr = new ArrayList<>();
+
+        for (String file : REGEX_FILES){
             regexArr.add(loadRegexFile(file));
         }
 
-        String allRegex = String.join("|", regexArr);
-        return Pattern.compile(allRegex);
+        return regexArr;
     }
 
     /**
@@ -155,7 +327,7 @@ public class PeriodNormalizer {
     * @return 
     * @description 加载正则表达式文件,并把每行用|连接起来
      */
-    public String loadRegexFile(String path){
+    private Pattern loadRegexFile(String path){
         List<String> regexArr = new ArrayList<>();
         try {
             //编码格式
@@ -169,7 +341,7 @@ public class PeriodNormalizer {
             //读取一行
             while ((lineTxt = bufferedReader.readLine()) != null) {
                 //正则表达式
-                System.out.println(lineTxt);
+                //System.out.println(lineTxt);
                 regexArr.add(lineTxt);
 
             }
@@ -178,30 +350,10 @@ public class PeriodNormalizer {
             System.out.println("读取文件内容出错");
             e.printStackTrace();
         }
-        return String.join("|", regexArr);
+        String temp = String.join("|", regexArr);
+        return Pattern.compile(temp);
     }
 
-    public static void main(String[] args){
-        try {
-            //编码格式
-            String encoding = "UTF-8";
-            //文件路径
 
-            File file = new File("C:\\Users\\Challenging\\Desktop\\NLPLearning\\Time-NLP\\resource\\period1.txt");
-            //输入流
-            InputStreamReader read = new InputStreamReader(new FileInputStream(file), encoding);// 考虑到编码格
-            BufferedReader bufferedReader = new BufferedReader(read);
-            String lineTxt = null;
-            //读取一行
-            while ((lineTxt = bufferedReader.readLine()) != null) {
-                //正则表达式
-                System.out.println(lineTxt);
-            }
-            read.close();
-        } catch (Exception e) {
-            System.out.println("读取文件内容出错");
-            e.printStackTrace();
-        }
-    }
 
 }
