@@ -8,6 +8,7 @@ import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Time;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,38 +30,46 @@ public class PeriodNormalizer {
             "/period3.txt",
     };
 
-    public List<PeriodUnit> periods;
     private List<TimeUnit> times;
     private static List<Pattern> patterns = null;
     private TimeNormalizer timeNormalizer;
 
-
+    /**
+    * @author LinZheng Chai
+    * @date 2019/6/5 16:56
+    * @param
+    * @return
+    * @description 构造函数
+     */
     public PeriodNormalizer(){
         try {
             patterns =readModel();
-            periods = new ArrayList<>();
         }catch (Exception e){
             e.printStackTrace();
         }
     }
 
 
-    public void parse(String target) throws URISyntaxException {
-
-        periods = new ArrayList<>();
-
+    /**
+    * @author LinZheng Chai
+    * @date 2019/6/5 16:57
+    * @param
+    * @return
+    * @description 时间段抽取的入口, 返回包含时间段(PeriodUnit)的arrayList
+     */
+    public List<PeriodUnit> parse(String target) throws URISyntaxException {
+        System.out.println("Parsing: "+target);
+        List<PeriodUnit> periods = new ArrayList<>();
         times = parseTime(target);
 
         //需要保持和time包预处理的结果相同，用来定位时间
         target = preHandling(target);
-        System.out.println("Parsing: "+target);
 
 
-        //先对时间进行抽取， 再对相应位置进行替换，方便后边正则匹配。
+        //先对时间进行抽取， 再对相应位置进行标记(time1, time2...)替换，方便后边正则匹配。
         String maskStr = maskTime(target);
-        periodExtract(maskStr, target);
-
-
+        periodExtract(maskStr, target, periods);
+        return periods;
     }
 
     /**
@@ -70,12 +79,13 @@ public class PeriodNormalizer {
     * @return
     * @description  抽取时间段
      */
-    private void periodExtract(String maskStr, String originStr){
+    private void periodExtract(String maskStr,
+                               String originStr, List<PeriodUnit> periods){
 
-        oneTimeToNowExtract(maskStr, originStr, patterns.get(0), patterns.get(3));
-        twoTimeExtract(maskStr, patterns.get(1));
-        oneTimePastExtract(maskStr, patterns.get(2));
-
+        oneTimeToNowExtract(maskStr, originStr, periods,
+                patterns.get(0), patterns.get(3));
+        twoTimeExtract(maskStr, periods, patterns.get(1));
+        oneTimePastExtract(maskStr, periods, patterns.get(2));
 
     }
 
@@ -86,7 +96,7 @@ public class PeriodNormalizer {
     * @return
     * @description 双时间点类型抽取
      */
-    private void twoTimeExtract(String maskStr, Pattern pattern){
+    private void twoTimeExtract(String maskStr, List<PeriodUnit> periods, Pattern pattern){
         Matcher matcher;
 
         matcher = pattern.matcher(maskStr);
@@ -131,7 +141,8 @@ public class PeriodNormalizer {
     * @return
     * @description 过去的单时间点, (昨天的, 上个月的)
      */
-    private void oneTimePastExtract(String maskStr, Pattern pattern){
+    private void oneTimePastExtract(String maskStr,
+                                    List<PeriodUnit> periods,Pattern pattern){
         Matcher matcher;
         matcher = pattern.matcher(maskStr);
         //System.out.println("patterns: "+ pattern);
@@ -176,6 +187,7 @@ public class PeriodNormalizer {
      * @description 过去的单时间点至今 (最近五月)
      */
     private void oneTimeToNowExtract(String maskStr, String originStr,
+                                     List<PeriodUnit> periods,
                                      Pattern pattern1, Pattern pattern2){
         /**
          *先匹配不需要时间抽取的(近5年,近3月, 近一周)

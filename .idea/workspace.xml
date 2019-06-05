@@ -2,14 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6646c23f-0653-4115-acb4-f499d1a7d35b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resource/period1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/resource/period1.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resource/period2.txt" beforeDir="false" afterPath="$PROJECT_DIR$/resource/period2.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/period/PeriodNormalizer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/period/PeriodNormalizer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/period/PeriodUnit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/period/PeriodUnit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/time/nlp/TimePoint.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/time/nlp/TimePoint.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/com/period/TimePeriodAnalyseTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/com/period/TimePeriodAnalyseTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/com/shinyke/TimeAnalyseTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/com/shinyke/TimeAnalyseTest.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -31,12 +27,12 @@
     <autoScrollFromSource>false</autoScrollFromSource>
     <coveredHighlight>-16756736</coveredHighlight>
     <outOfDateStripe>-256</outOfDateStripe>
-    <excludes null="true" />
     <includes null="true" />
+    <excludes null="true" />
     <alwaysExpandTestClasses>false</alwaysExpandTestClasses>
     <autoViewInCloudReport>true</autoViewInCloudReport>
-    <flushPolicy>0</flushPolicy>
     <filteredHighlight>-11513776</filteredHighlight>
+    <flushPolicy>0</flushPolicy>
     <outOfDateHighlight>-16777201</outOfDateHighlight>
     <showInline>true</showInline>
     <dumpInstrumentedSources>false</dumpInstrumentedSources>
@@ -59,8 +55,8 @@
     <generatedInitString>C:\Users\Challenging\Desktop\NLPLearning\Time-NLP\.clover\coverage.db</generatedInitString>
     <regexpContexts class="java.util.ArrayList" />
     <flushInterval>5000</flushInterval>
-    <viewIncludeAnnotation>true</viewIncludeAnnotation>
     <flattenPackages>false</flattenPackages>
+    <viewIncludeAnnotation>true</viewIncludeAnnotation>
     <loadPerTestData>true</loadPerTestData>
     <showErrorMarks>true</showErrorMarks>
     <buildWithClover>true</buildWithClover>
@@ -85,20 +81,32 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/com/period/TimePeriodAnalyseTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="40">
-              <caret line="43" column="38" selection-start-line="43" selection-start-column="38" selection-end-line="43" selection-end-column="38" />
+            <state relative-caret-position="47">
+              <caret line="34" column="23" lean-forward="true" selection-start-line="34" selection-start-column="23" selection-end-line="34" selection-end-column="23" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/resource/period0.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="22">
+              <caret line="1" column="1" selection-start-line="1" selection-start-column="1" selection-end-line="1" selection-end-column="1" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test/com/shinyke/TimeAnalyseTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="399">
-              <caret line="75" column="34" lean-forward="true" selection-start-line="75" selection-start-column="34" selection-end-line="75" selection-end-column="34" />
+            <state relative-caret-position="264">
+              <caret line="42" column="36" selection-start-line="42" selection-start-column="36" selection-end-line="42" selection-end-column="36" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
                 <element signature="imports" expanded="true" />
@@ -108,32 +116,9 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resource/period1.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret selection-end-line="1" selection-end-column="21" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resource/period2.txt">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/time/enums/TimeAcc.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="271">
-              <caret line="22" selection-start-line="22" selection-end-line="22" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/time/nlp/TimePoint.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="337">
+            <state relative-caret-position="638">
               <caret line="29" column="11" selection-start-line="29" selection-start-column="11" selection-end-line="29" selection-end-column="11" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
@@ -145,8 +130,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/period/PeriodNormalizer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="220">
-              <caret line="226" column="39" lean-forward="true" selection-start-line="226" selection-start-column="39" selection-end-line="226" selection-end-column="39" />
+            <state relative-caret-position="-173">
+              <caret line="84" column="38" lean-forward="true" selection-start-line="84" selection-start-column="38" selection-end-line="84" selection-end-column="38" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -164,23 +149,42 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="jar://C:/Java/jdk/src.zip!/java/util/ArrayList.java">
+        <entry file="file://$PROJECT_DIR$/src/com/period/PeriodUnit.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="77">
-              <caret line="428" selection-start-line="428" selection-end-line="428" />
+            <state relative-caret-position="1672">
+              <caret line="169" lean-forward="true" selection-start-line="169" selection-end-line="169" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#4550#4551#0" expanded="true" />
+                <element signature="e#4623#4624#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/period/PeriodUnit.java">
+        <entry file="file://$PROJECT_DIR$/src/com/time/nlp/TimeNormalizer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="53">
-              <caret line="61" column="26" selection-start-line="61" selection-start-column="26" selection-end-line="61" selection-end-column="26" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#4623#4624#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="469">
+              <caret line="306" column="48" selection-start-line="306" selection-start-column="48" selection-end-line="306" selection-end-column="48" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pom.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="469">
+              <caret line="32" column="19" selection-start-line="32" selection-start-column="19" selection-end-line="32" selection-end-column="19" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/time/enums/RangeTimeEnum.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-85">
+              <caret line="31" column="13" lean-forward="true" selection-start-line="31" selection-start-column="13" selection-end-line="31" selection-end-column="13" />
             </state>
           </provider>
         </entry>
@@ -205,13 +209,14 @@
       <find>getclass</find>
       <find>compile</find>
       <find>Time_norm</find>
-      <find>Time_norm</find>
       <find>normalizer</find>
       <find>new time</find>
       <find>new timeunit</find>
       <find>new timeunit(</find>
       <find>per</find>
       <find>最近五月</find>
+      <find>periodNormalizer.parse</find>
+      <find>periodNormalizer.per</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -225,7 +230,6 @@
       <list>
         <option value="$PROJECT_DIR$/src/com/period/Period.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/src/com/time/nlp/TimeNormalizer.java" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/src/com/time/enums/TimeAcc.java" />
         <option value="$PROJECT_DIR$/src/com/time/nlp/TimePoint.java" />
@@ -233,10 +237,12 @@
         <option value="$PROJECT_DIR$/resource/period2.txt" />
         <option value="$PROJECT_DIR$/resource/period1.txt" />
         <option value="$PROJECT_DIR$/resource/period0.txt" />
-        <option value="$PROJECT_DIR$/src/com/period/PeriodNormalizer.java" />
         <option value="$PROJECT_DIR$/src/com/period/PeriodUnit.java" />
         <option value="$PROJECT_DIR$/resource/period3.txt" />
         <option value="$PROJECT_DIR$/test/com/period/TimePeriodAnalyseTest.java" />
+        <option value="$PROJECT_DIR$/src/com/period/PeriodNormalizer.java" />
+        <option value="$PROJECT_DIR$/src/com/time/nlp/TimeNormalizer.java" />
+        <option value="$PROJECT_DIR$/test/com/shinyke/TimeAnalyseTest.java" />
       </list>
     </option>
   </component>
@@ -259,9 +265,9 @@
     </treeState>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1236" />
-    <option name="width" value="1332" />
-    <option name="height" value="1423" />
+    <option name="x" value="1234" />
+    <option name="width" value="1334" />
+    <option name="height" value="1425" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="1" id="Add" />
@@ -271,7 +277,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -279,11 +284,6 @@
             <path>
               <item name="Time-NLP" type="b2602c69:ProjectViewProjectNode" />
               <item name="Time-NLP" type="bbb3b172:PsiDirectoryNodeWrapper" />
-            </path>
-            <path>
-              <item name="Time-NLP" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Time-NLP" type="bbb3b172:PsiDirectoryNodeWrapper" />
-              <item name="resource" type="bbb3b172:PsiDirectoryNodeWrapper" />
             </path>
             <path>
               <item name="Time-NLP" type="b2602c69:ProjectViewProjectNode" />
@@ -363,12 +363,13 @@
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1559653036968" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1559725898289" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -392,7 +393,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="JUnit.TimePeriodAnalyseTest.simpleTest">
+  <component name="RunManager" selected="JUnit.TimeAnalyseTest.testTimeNLP">
     <configuration name="PeriodNormalizer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.period.PeriodNormalizer" />
       <module name="Time-NLP" />
@@ -402,6 +403,22 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TimeAnalyseTest.testTimeNLP" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Time-NLP" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.shinyke.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.shinyke" />
+      <option name="MAIN_CLASS_NAME" value="com.shinyke.TimeAnalyseTest" />
+      <option name="METHOD_NAME" value="testTimeNLP" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -424,6 +441,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.TimeAnalyseTest.testTimeNLP" />
         <item itemvalue="JUnit.TimePeriodAnalyseTest.simpleTest" />
         <item itemvalue="Application.PeriodNormalizer" />
       </list>
@@ -442,23 +460,12 @@
       <workItem from="1558939100020" duration="1417000" />
       <workItem from="1559568023829" duration="12511000" />
       <workItem from="1559614844972" duration="4444000" />
-      <workItem from="1559624136316" duration="24463000" />
+      <workItem from="1559624136316" duration="24927000" />
+      <workItem from="1559723932062" duration="1926000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="TimePeriodAnalyseTest_simpleTest - 2019.06.04 at 20h 07m 48s.xml">
-      <configuration name="TimePeriodAnalyseTest.simpleTest" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="TimePeriodAnalyseTest_simpleTest - 2019.06.04 at 20h 26m 36s.xml">
-      <configuration name="TimePeriodAnalyseTest.simpleTest" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="TimePeriodAnalyseTest_simpleTest - 2019.06.04 at 20h 28m 45s.xml">
-      <configuration name="TimePeriodAnalyseTest.simpleTest" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="TimePeriodAnalyseTest_simpleTest - 2019.06.04 at 20h 29m 14s.xml">
-      <configuration name="TimePeriodAnalyseTest.simpleTest" configurationId="JUnit" />
-    </history-entry>
     <history-entry file="TimePeriodAnalyseTest_simpleTest - 2019.06.04 at 20h 30m 15s.xml">
       <configuration name="TimePeriodAnalyseTest.simpleTest" configurationId="JUnit" />
     </history-entry>
@@ -477,15 +484,27 @@
     <history-entry file="TimePeriodAnalyseTest_simpleTest - 2019.06.04 at 20h 56m 53s.xml">
       <configuration name="TimePeriodAnalyseTest.simpleTest" configurationId="JUnit" />
     </history-entry>
+    <history-entry file="TimePeriodAnalyseTest_simpleTest - 2019.06.04 at 20h 57m 22s.xml">
+      <configuration name="TimePeriodAnalyseTest.simpleTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="TimePeriodAnalyseTest_simpleTest - 2019.06.04 at 20h 59m 57s.xml">
+      <configuration name="TimePeriodAnalyseTest.simpleTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="TimePeriodAnalyseTest_simpleTest - 2019.06.05 at 16h 51m 52s.xml">
+      <configuration name="TimePeriodAnalyseTest.simpleTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="TimeAnalyseTest_testTimeNLP - 2019.06.05 at 17h 10m 59s.xml">
+      <configuration name="TimeAnalyseTest.testTimeNLP" configurationId="JUnit" />
+    </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="42835000" />
+    <option name="totallyTimeSpent" value="45225000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1302" height="698" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.22447325" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.22933549" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -496,7 +515,7 @@
       <window_info id="Test Runs" order="8" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32844037" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.66972476" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.987156" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -507,7 +526,6 @@
       <window_info anchor="bottom" id="Database Changes" order="10" />
       <window_info anchor="bottom" id="Version Control" order="11" />
       <window_info anchor="bottom" id="Messages" order="12" weight="0.32909784" />
-      <window_info anchor="right" id="Coverage" side_tool="true" weight="0.3298217" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -518,6 +536,7 @@
       <window_info anchor="right" id="Database" order="7" />
       <window_info anchor="right" id="Palette&#9;" order="8" />
       <window_info anchor="right" id="Theme Preview" order="9" />
+      <window_info anchor="right" id="Coverage" order="10" side_tool="true" weight="0.3298217" />
     </layout>
     <layout-to-restore>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22447325" />
@@ -586,13 +605,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="251">
           <caret line="48" column="6" selection-start-line="48" selection-start-column="6" selection-end-line="48" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="704">
-          <caret line="32" column="19" selection-start-line="32" selection-start-column="19" selection-end-line="32" selection-end-column="19" />
         </state>
       </provider>
     </entry>
@@ -671,23 +683,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/time/nlp/TimeNormalizer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="188" column="24" selection-start-line="188" selection-start-column="24" selection-end-line="188" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/time/enums/RangeTimeEnum.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="31" column="13" lean-forward="true" selection-start-line="31" selection-start-column="13" selection-end-line="31" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resource/period2.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="jar://C:/Java/jdk/src.zip!/java/util/ArrayList.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="77">
@@ -702,50 +697,15 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resource/period0.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="22">
-          <caret line="1" column="1" selection-start-line="1" selection-start-column="1" selection-end-line="1" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/time/nlp/TimePoint.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="337">
-          <caret line="29" column="11" selection-start-line="29" selection-start-column="11" selection-end-line="29" selection-end-column="11" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/time/enums/TimeAcc.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="271">
+        <state relative-caret-position="440">
           <caret line="22" selection-start-line="22" selection-end-line="22" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/period/PeriodUnit.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="53">
-          <caret line="61" column="26" selection-start-line="61" selection-start-column="26" selection-end-line="61" selection-end-column="26" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#4623#4624#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/period/PeriodNormalizer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="226" column="39" lean-forward="true" selection-start-line="226" selection-start-column="39" selection-end-line="226" selection-end-column="39" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
+    <entry file="file://$PROJECT_DIR$/resource/period2.txt">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/resource/period3.txt">
       <provider selected="true" editor-type-id="text-editor">
@@ -754,21 +714,84 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/com/shinyke/TimeAnalyseTest.java">
+    <entry file="file://$PROJECT_DIR$/resource/period0.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="399">
-          <caret line="75" column="34" lean-forward="true" selection-start-line="75" selection-start-column="34" selection-end-line="75" selection-end-column="34" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="22">
+          <caret line="1" column="1" selection-start-line="1" selection-start-column="1" selection-end-line="1" selection-end-column="1" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test/com/period/TimePeriodAnalyseTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="40">
-          <caret line="43" column="38" selection-start-line="43" selection-start-column="38" selection-end-line="43" selection-end-column="38" />
+        <state relative-caret-position="47">
+          <caret line="34" column="23" lean-forward="true" selection-start-line="34" selection-start-column="23" selection-end-line="34" selection-end-column="23" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/period/PeriodUnit.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1672">
+          <caret line="169" lean-forward="true" selection-start-line="169" selection-end-line="169" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#4550#4551#0" expanded="true" />
+            <element signature="e#4623#4624#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/time/enums/RangeTimeEnum.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-85">
+          <caret line="31" column="13" lean-forward="true" selection-start-line="31" selection-start-column="13" selection-end-line="31" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/time/nlp/TimePoint.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="638">
+          <caret line="29" column="11" selection-start-line="29" selection-start-column="11" selection-end-line="29" selection-end-column="11" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/time/nlp/TimeNormalizer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="469">
+          <caret line="306" column="48" selection-start-line="306" selection-start-column="48" selection-end-line="306" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="469">
+          <caret line="32" column="19" selection-start-line="32" selection-start-column="19" selection-end-line="32" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/period/PeriodNormalizer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-173">
+          <caret line="84" column="38" lean-forward="true" selection-start-line="84" selection-start-column="38" selection-end-line="84" selection-end-column="38" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/shinyke/TimeAnalyseTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="264">
+          <caret line="42" column="36" selection-start-line="42" selection-start-column="36" selection-end-line="42" selection-end-column="36" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -2,6 +2,8 @@ package com.period;
 
 import org.junit.Test;
 
+import java.util.List;
+
 /**
  * @program: Time-NLP
  * @description
@@ -33,36 +35,36 @@ public class TimePeriodAnalyseTest {
     public void simpleTest(){
         try {
             PeriodNormalizer periodNormalizer = new PeriodNormalizer();
-            //periodNormalizer.parse("今年3月的, 去年的, 去年12月, 昨天 有雷阵雨");
-
-            periodNormalizer.parse("今天的有雷阵雨");
-            System.out.println(periodNormalizer.periods.get(0));
-            periodNormalizer.parse("昨天的有雷阵雨");
-            System.out.println(periodNormalizer.periods.get(0));
-            periodNormalizer.parse("前天的有雷阵雨");
-            System.out.println(periodNormalizer.periods.get(0));
-            periodNormalizer.parse("近两年的");
-            System.out.println(periodNormalizer.periods.get(0));
-            periodNormalizer.parse("近五个月的有雷阵雨");
-            System.out.println(periodNormalizer.periods.get(0));
-            periodNormalizer.parse("近三月的有雷阵雨");
-            System.out.println(periodNormalizer.periods.get(0));
-            periodNormalizer.parse("近3天的有雷阵雨");
-            System.out.println(periodNormalizer.periods.get(0));
-            periodNormalizer.parse("近一年的有雷阵雨");
-            System.out.println(periodNormalizer.periods.get(0));
-            periodNormalizer.parse("最近一周的有雷阵雨");
-            System.out.println(periodNormalizer.periods.get(0));
-            periodNormalizer.parse("上个月5号到昨天的");
-            System.out.println(periodNormalizer.periods.get(0));
-            periodNormalizer.parse("去年12月的");
-            System.out.println(periodNormalizer.periods.get(0));
-            periodNormalizer.parse("今年以来的");
-            System.out.println(periodNormalizer.periods.get(0));
-            periodNormalizer.parse("上月的");
-            System.out.println(periodNormalizer.periods.get(0));
-            periodNormalizer.parse("这个月的");
-            System.out.println(periodNormalizer.periods.get(0));
+            //periods = periodNormalizer.parse("今年3月的, 去年的, 去年12月, 昨天 有雷阵雨");
+            List<PeriodUnit> periods;
+            periods = periodNormalizer.parse("今天的有雷阵雨");
+            System.out.println(periods.get(0));
+            periods = periodNormalizer.parse("昨天的有雷阵雨");
+            System.out.println(periods.get(0));
+            periods = periodNormalizer.parse("前天的有雷阵雨");
+            System.out.println(periods.get(0));
+            periods = periodNormalizer.parse("近两年的");
+            System.out.println(periods.get(0));
+            periods = periodNormalizer.parse("近五个月的有雷阵雨");
+            System.out.println(periods.get(0));
+            periods = periodNormalizer.parse("近三月的有雷阵雨");
+            System.out.println(periods.get(0));
+            periods = periodNormalizer.parse("近3天的有雷阵雨");
+            System.out.println(periods.get(0));
+            periods = periodNormalizer.parse("近一年的有雷阵雨");
+            System.out.println(periods.get(0));
+            periods = periodNormalizer.parse("最近一周的有雷阵雨");
+            System.out.println(periods.get(0));
+            periods = periodNormalizer.parse("上个月5号到昨天的");
+            System.out.println(periods.get(0));
+            periods = periodNormalizer.parse("去年12月的");
+            System.out.println(periods.get(0));
+            periods = periodNormalizer.parse("今年以来的");
+            System.out.println(periods.get(0));
+            periods = periodNormalizer.parse("上月的");
+            System.out.println(periods.get(0));
+            periods = periodNormalizer.parse("这个月的");
+            System.out.println(periods.get(0));
         }catch (Exception e){
             e.printStackTrace();
         }
