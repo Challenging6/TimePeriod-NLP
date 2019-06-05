@@ -4,10 +4,6 @@ import com.time.enums.TimeAcc;
 import com.time.nlp.TimeNormalizer;
 import com.time.nlp.TimeUnit;
 import com.time.util.DateUtil;
-import com.time.util.StringUtil;
-import org.omg.CORBA.TIMEOUT;
-
-import java.sql.Time;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -30,14 +26,14 @@ public class PeriodUnit {
     * @return
     * @description 具有明确的两个时间点
      */
-    public PeriodUnit(TimeUnit time1, TimeUnit time2){
-        if (time1.getTime().compareTo(time2.getTime()) > 0 ){
-            start = time2;
-            end = time1;
+    public PeriodUnit(TimeUnit timeStart, TimeUnit timeEnd){
+        if (timeStart.getTime().compareTo(timeEnd.getTime()) > 0 ){
+            start = timeEnd;
+            end = timeStart;
         }
         else{
-            start = time1;
-            end = time2;
+            start = timeStart;
+            end = timeEnd;
         }
     }
 
@@ -48,18 +44,18 @@ public class PeriodUnit {
     * @return
     * @description 只有一个时间点
      */
-    public PeriodUnit(TimeUnit time1, TimeNormalizer timeNormalizer, boolean toNow){
+    public PeriodUnit(TimeUnit timeStart, TimeNormalizer timeNormalizer, boolean toNow){
         this.timeNormalizer = timeNormalizer;
         if (!toNow){
 
-            String timeNorm = time1.Time_Norm;
+            String timeNorm = timeStart.Time_Norm;
             String accStr = timeNorm.substring(timeNorm.length()-1);
-            start = time1;
+            start = timeStart;
             setTimeAcc(accStr);
-            setEnd();
+            setTimeEnd();
         }
         else{
-            start = time1;
+            start = timeStart;
             end = new TimeUnit("今天", timeNormalizer);
         }
     }
@@ -135,7 +131,7 @@ public class PeriodUnit {
     * @return
     * @description 只有一个时间点的情况下, 根据时间精度设置结束时间
      */
-    private void setEnd() {
+    private void setTimeEnd() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(start.getTime());
         if (timeAcc==TimeAcc.year){
@@ -168,9 +164,17 @@ public class PeriodUnit {
 
     }
 
+    /**
+    * @author LinZheng Chai
+    * @date 2019/6/5 20:25
+    * @param
+    * @return
+    * @description 将时间规范化成: yyyy年MM月dd日 HH时mm分ss秒 的格式.
+     */
     public  String formatDate(Date date) {
         return DateUtil.formatDate(date, "yyyy年MM月dd日 HH时mm分ss秒");
     }
+
 
     @Override
     public String toString(){

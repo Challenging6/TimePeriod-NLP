@@ -5,7 +5,7 @@ import org.junit.Test;
 import java.util.List;
 
 /**
- * @program: Time-NLP
+ * @program: Time Period 基本功能测试
  * @description
  * @author: ChaiLinZheng
  * @create: 2019-06-03 23:19
@@ -37,6 +37,10 @@ public class TimePeriodAnalyseTest {
             PeriodNormalizer periodNormalizer = new PeriodNormalizer();
             //periods = periodNormalizer.parse("今年3月的, 去年的, 去年12月, 昨天 有雷阵雨");
             List<PeriodUnit> periods;
+            periods = periodNormalizer.parse("6月1号-5月3号");
+            System.out.println(periods.get(0));
+            periods = periodNormalizer.parse("6月1号和5月3号之间");
+            System.out.println(periods.get(0));
             periods = periodNormalizer.parse("今天的有雷阵雨");
             System.out.println(periods.get(0));
             periods = periodNormalizer.parse("昨天的有雷阵雨");

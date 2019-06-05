@@ -1,2 +1,0 @@
-(time(\d+)到time(\d+))
-(time(\d+)至time(\d+))
