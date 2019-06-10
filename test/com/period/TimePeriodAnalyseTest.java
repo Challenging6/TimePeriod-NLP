@@ -37,7 +37,7 @@ public class TimePeriodAnalyseTest {
     public void simpleTest(){
         try {
             URL url = TimeNormalizer.class.getResource("/TimeExp.m");
-            PeriodNormalizer periodNormalizer = new PeriodNormalizer(url.toURI().toString());
+            PeriodNormalizer periodNormalizer = PeriodNormalizer.getInstance(url.toURI().toString());
             List<PeriodUnit> periods;
             periods = periodNormalizer.parse("今年3月的, 去年的, 去年12月, 昨天 有雷阵雨");
             System.out.println(periods.get(0));

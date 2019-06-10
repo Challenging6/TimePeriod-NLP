@@ -23,6 +23,7 @@ public class PeriodNormalizer {
     private static Map<String, Pattern> PATTERNS = null;
     private String modelPath;
     private TimeNormalizer timeNormalizer;
+    private static volatile PeriodNormalizer periodNormalizer = null;
 
     /**
      * @author LinZheng Chai
@@ -31,7 +32,7 @@ public class PeriodNormalizer {
      * @return
      * @description 构造函数
      */
-    public PeriodNormalizer(String modelPath){
+    private PeriodNormalizer(String modelPath){
         try {
             this.modelPath = modelPath;
             PATTERNS =readModel(REGEX_FILES); //加载正则
@@ -39,7 +40,23 @@ public class PeriodNormalizer {
             e.printStackTrace();
         }
     }
-
+    /**
+    * @author LinZheng Chai
+    * @date 2019/6/10 16:53
+    * @param
+    * @return
+    * @description 实例函数， Double-Check 实现单例
+     */
+    public static PeriodNormalizer getInstance(String modelPath){
+        if (periodNormalizer == null){
+            synchronized (PeriodNormalizer.class){
+                if (periodNormalizer == null){
+                    periodNormalizer = new PeriodNormalizer(modelPath);
+                }
+            }
+        }
+        return periodNormalizer;
+    }
 
     /**
      * @author LinZheng Chai
@@ -271,11 +288,9 @@ public class PeriodNormalizer {
      * @return
      * @description 进行时间抽取
      */
-    private List<TimeUnit> parseTime(String target) throws URISyntaxException {
-//        URL url = TimeNormalizer.class.getResource("/TimeExp.m");
-        //System.out.println(url.toURI().toString());
-//        timeNormalizer = new TimeNormalizer(url.toURI().toString());
-        timeNormalizer = new TimeNormalizer(this.modelPath);
+    private List<TimeUnit> parseTime(String target){
+
+        timeNormalizer = TimeNormalizer.getInstance(this.modelPath);
         //timeNormalizer.setPreferFuture(true);
         TimeUnit[] temp = timeNormalizer.parse(target);
         return new ArrayList<>(Arrays.asList(temp));

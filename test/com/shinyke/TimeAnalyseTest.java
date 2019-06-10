@@ -37,7 +37,7 @@ public class TimeAnalyseTest {
     public void testTimeNLP() throws URISyntaxException {
         URL url = TimeNormalizer.class.getResource("/TimeExp.m");
         System.out.println(url.toURI().toString());
-        TimeNormalizer normalizer = new TimeNormalizer(url.toURI().toString());
+        TimeNormalizer normalizer = TimeNormalizer.getInstance(url.toURI().toString());
         normalizer.setPreferFuture(true);
         
         normalizer.parse("Hi，all.近三月");// 抽取时间

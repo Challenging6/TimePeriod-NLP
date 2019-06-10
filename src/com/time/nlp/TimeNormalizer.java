@@ -43,6 +43,8 @@ public class TimeNormalizer implements Serializable {
 
     private boolean isPreferFuture = true;
 
+    private static volatile TimeNormalizer timeNormalizer = null;
+
     public TimeNormalizer() {
         if (patterns == null) {
             try {
@@ -58,11 +60,29 @@ public class TimeNormalizer implements Serializable {
     }
 
     /**
+    * @author LinZheng Chai
+    * @date 2019/6/10 17:02
+    * @param
+    * @return
+    * @description Double-Check 实现单例
+     */
+    public static TimeNormalizer getInstance(String modelPath){
+        if (timeNormalizer == null){
+            synchronized (TimeNormalizer.class){
+                if (timeNormalizer == null){
+                    timeNormalizer = new TimeNormalizer(modelPath);
+                }
+            }
+        }
+        return timeNormalizer;
+    }
+
+    /**
      * 参数为TimeExp.m文件路径
      *
      * @param path
      */
-    public TimeNormalizer(String path) {
+    private TimeNormalizer(String path) {
         if (patterns == null) {
             try {
                 patterns = readModel(path);
