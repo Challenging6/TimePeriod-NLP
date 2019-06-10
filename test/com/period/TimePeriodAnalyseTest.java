@@ -38,8 +38,12 @@ public class TimePeriodAnalyseTest {
         try {
             URL url = TimeNormalizer.class.getResource("/TimeExp.m");
             PeriodNormalizer periodNormalizer = new PeriodNormalizer(url.toURI().toString());
-            //periods = periodNormalizer.parse("今年3月的, 去年的, 去年12月, 昨天 有雷阵雨");
             List<PeriodUnit> periods;
+            periods = periodNormalizer.parse("今年3月的, 去年的, 去年12月, 昨天 有雷阵雨");
+            System.out.println(periods.get(0));
+            System.out.println(periods.get(1));
+            System.out.println(periods.get(2));
+            System.out.println(periods.get(3));
             periods = periodNormalizer.parse("6月1号-5月3号");
             System.out.println(periods.get(0));
             periods = periodNormalizer.parse("6月1号和5月3号之间");
@@ -54,8 +58,9 @@ public class TimePeriodAnalyseTest {
             System.out.println(periods.get(0));
             periods = periodNormalizer.parse("近五个月的有雷阵雨");
             System.out.println(periods.get(0));
-            periods = periodNormalizer.parse("近三月的有雷阵雨");
+            periods = periodNormalizer.parse("近三月的有雷阵雨, 昨天没有");
             System.out.println(periods.get(0));
+            System.out.println(periods.get(1));
             periods = periodNormalizer.parse("近3天的有雷阵雨");
             System.out.println(periods.get(0));
             periods = periodNormalizer.parse("近一年的有雷阵雨");

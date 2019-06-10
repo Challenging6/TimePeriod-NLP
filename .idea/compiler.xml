@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="Time-NLP" target="8" />
+      <module name="Time-NLP" target="7" />
     </bytecodeTargetLevel>
   </component>
 </project>
