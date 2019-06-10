@@ -3,10 +3,10 @@ package com.period;
 import com.time.nlp.TimeNormalizer;
 import com.time.nlp.TimeUnit;
 import com.time.nlp.stringPreHandlingModule;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,6 +21,7 @@ public class PeriodNormalizer {
 
     private static final String REGEX_FILES = "/PeriodRegex.txt";  //正则文件
     private static Map<String, Pattern> PATTERNS = null;
+    private String modelPath;
     private TimeNormalizer timeNormalizer;
 
     /**
@@ -30,8 +31,9 @@ public class PeriodNormalizer {
     * @return
     * @description 构造函数
      */
-    public PeriodNormalizer(){
+    public PeriodNormalizer(String modelPath){
         try {
+            this.modelPath = modelPath;
             PATTERNS =readModel(REGEX_FILES); //加载正则
         }catch (Exception e){
             e.printStackTrace();
@@ -89,7 +91,7 @@ public class PeriodNormalizer {
      * @description 过去的单时间点至今 (最近五月)
      */
     private String oneTimeToNowExtract(String maskStr, String originStr,
-                                     List<PeriodUnit> periods,List<TimeUnit> times){
+                                       List<PeriodUnit> periods, List<TimeUnit> times){
         /**
          *先匹配不需要时间抽取的(近5年,近3月, 近一周)
          */
@@ -256,9 +258,10 @@ public class PeriodNormalizer {
     * @description 进行时间抽取
      */
     private List<TimeUnit> parseTime(String target) throws URISyntaxException {
-        URL url = TimeNormalizer.class.getResource("/TimeExp.m");
+//        URL url = TimeNormalizer.class.getResource("/TimeExp.m");
         //System.out.println(url.toURI().toString());
-        timeNormalizer = new TimeNormalizer(url.toURI().toString());
+//        timeNormalizer = new TimeNormalizer(url.toURI().toString());
+        timeNormalizer = new TimeNormalizer(this.modelPath);
         //timeNormalizer.setPreferFuture(true);
         TimeUnit[] temp = timeNormalizer.parse(target);
         return new ArrayList<>(Arrays.asList(temp));
@@ -335,7 +338,7 @@ public class PeriodNormalizer {
                         if (lineTxt.trim().length() == 0) continue;
 
                         if (lineTxt.substring(0, 4).equals("####")){
-                            pattern =Pattern.compile(String.join("|", tempRegex));
+                            pattern =Pattern.compile(StringUtils.join(tempRegex, "|"));
                             regexMap.put(regexName,pattern);
                             break;
                         }

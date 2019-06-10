@@ -1,7 +1,9 @@
 package com.period;
 
+import com.time.nlp.TimeNormalizer;
 import org.junit.Test;
 
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -34,7 +36,8 @@ public class TimePeriodAnalyseTest {
     @Test
     public void simpleTest(){
         try {
-            PeriodNormalizer periodNormalizer = new PeriodNormalizer();
+            URL url = TimeNormalizer.class.getResource("/TimeExp.m");
+            PeriodNormalizer periodNormalizer = new PeriodNormalizer(url.toURI().toString());
             //periods = periodNormalizer.parse("今年3月的, 去年的, 去年12月, 昨天 有雷阵雨");
             List<PeriodUnit> periods;
             periods = periodNormalizer.parse("6月1号-5月3号");
