@@ -45,7 +45,7 @@ public class TimeNormalizer implements Serializable {
 
     private static volatile TimeNormalizer timeNormalizer = null;
 
-    public TimeNormalizer() {
+    private TimeNormalizer() {
         if (patterns == null) {
             try {
                 InputStream in = getClass().getResourceAsStream("/TimeExp.m");
@@ -76,6 +76,27 @@ public class TimeNormalizer implements Serializable {
         }
         return timeNormalizer;
     }
+    public static TimeNormalizer getInstance(){
+        if (timeNormalizer == null){
+            synchronized (TimeNormalizer.class){
+                if (timeNormalizer == null){
+                    timeNormalizer = new TimeNormalizer();
+                }
+            }
+        }
+        return timeNormalizer;
+    }
+    public static TimeNormalizer getInstance(String modelPath,
+                                             boolean _isPreferFuture){
+        if (timeNormalizer == null){
+            synchronized (TimeNormalizer.class){
+                if (timeNormalizer == null){
+                    timeNormalizer = new TimeNormalizer(modelPath, _isPreferFuture);
+                }
+            }
+        }
+        return timeNormalizer;
+    }
 
     /**
      * 参数为TimeExp.m文件路径
@@ -93,12 +114,14 @@ public class TimeNormalizer implements Serializable {
         }
     }
 
+
+
     /**
      * 参数为TimeExp.m文件路径
      *
      * @param path
      */
-    public TimeNormalizer(String path, boolean isPreferFuture) {
+    private TimeNormalizer(String path, boolean isPreferFuture) {
         this.isPreferFuture = isPreferFuture;
         if (patterns == null) {
             try {
