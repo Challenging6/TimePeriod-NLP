@@ -77,6 +77,10 @@ public class TimePeriodAnalyseTest {
             System.out.println(periods.get(0));
             periods = periodNormalizer.parse("这个月的");
             System.out.println(periods.get(0));
+            periods = periodNormalizer.parse("过去3个月的");
+            System.out.println(periods.get(0));
+            periods = periodNormalizer.parse("过去一周");
+            System.out.println(periods.get(0));
         }catch (Exception e){
             e.printStackTrace();
         }

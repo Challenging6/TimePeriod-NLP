@@ -40,9 +40,7 @@ public class TimeNormalizer implements Serializable {
     private static Pattern patterns = null;
     private String target;
     private TimeUnit[] timeToken = new TimeUnit[0];
-
     private boolean isPreferFuture = true;
-
     private static volatile TimeNormalizer timeNormalizer = null;
 
     private TimeNormalizer() {

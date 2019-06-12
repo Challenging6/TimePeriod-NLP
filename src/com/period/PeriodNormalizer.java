@@ -387,6 +387,8 @@ public class PeriodNormalizer {
         return regexMap;
     }
 
+    public static void main(String[] args){
 
+    }
 
 }
