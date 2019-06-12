@@ -23,15 +23,16 @@ public class PeriodNormalizer {
     private static Map<String, Pattern> PATTERNS = null;
     private String modelPath;
     private TimeNormalizer timeNormalizer;
+    private static volatile PeriodNormalizer periodNormalizer = null;
 
     /**
-    * @author LinZheng Chai
-    * @date 2019/6/5 16:56
-    * @param
-    * @return
-    * @description 构造函数
+     * @author LinZheng Chai
+     * @date 2019/6/5 16:56
+     * @param
+     * @return
+     * @description 构造函数
      */
-    public PeriodNormalizer(String modelPath){
+    private PeriodNormalizer(String modelPath){
         try {
             this.modelPath = modelPath;
             PATTERNS =readModel(REGEX_FILES); //加载正则
@@ -39,47 +40,67 @@ public class PeriodNormalizer {
             e.printStackTrace();
         }
     }
-
-
     /**
     * @author LinZheng Chai
-    * @date 2019/6/5 16:57
+    * @date 2019/6/10 16:53
     * @param
     * @return
-    * @description 时间段抽取的入口, 返回包含时间段(PeriodUnit)的arrayList
+    * @description 实例函数， Double-Check 实现单例
+     */
+    public static PeriodNormalizer getInstance(String modelPath){
+        if (periodNormalizer == null){
+            synchronized (PeriodNormalizer.class){
+                if (periodNormalizer == null){
+                    periodNormalizer = new PeriodNormalizer(modelPath);
+                }
+            }
+        }
+        return periodNormalizer;
+    }
+
+    /**
+     * @author LinZheng Chai
+     * @date 2019/6/5 16:57
+     * @param
+     * @return
+     * @description 时间段抽取的入口, 返回包含时间段(PeriodUnit)的arrayList
      */
     public List<PeriodUnit> parse(String target) throws URISyntaxException {
-        List<TimeUnit> times;
+
         List<PeriodUnit> periods = new ArrayList<>();
 
         System.out.println("Parsing: "+target);
-        times = parseTime(target);
+
 
         //需要保持和time包预处理的结果相同，用来定位时间
         target = preHandling(target);
 
-        //先对时间进行抽取， 再对相应位置进行标记(time1, time2...)替换，方便后边正则匹配。
-        String maskStr = maskTime(target, times);
-        periodExtract(maskStr, target, periods, times);
+        periodExtract(target, periods);
         return periods;
     }
 
     /**
-    * @author LinZheng Chai
-    * @date 2019/6/4 0:13
-    * @param
-    * @return
-    * @description  抽取时间段
+     * @author LinZheng Chai
+     * @date 2019/6/4 0:13
+     * @param
+     * @return
+     * @description  抽取时间段
      */
-    private void periodExtract(String maskStr,
-                               String originStr,
-                               List<PeriodUnit> periods,
-                               List<TimeUnit> times){
+    private void periodExtract(String target, List<PeriodUnit> periods) throws URISyntaxException {
+        List<TimeUnit> times;
 
         //抽取函数, 可以自己定义相应规则和抽取块
-        maskStr = oneTimeToNowExtract(maskStr, originStr, periods, times);
-        maskStr = twoTimeExtract(maskStr, periods, times);
-        maskStr = oneTimePointExtract(maskStr, periods, times);
+        //1.无需时间点的时间段抽取
+        String maskStr = lastTimeExtract(target, periods);
+
+        //2. 需要时间点的时间段抽取
+        //先对时间进行抽取， 再对相应位置进行标记(time1, time2...)替换，方便后边正则匹配。
+        times = parseTime(maskStr);        //抽取时间
+        maskStr = maskTime(target, times); //标记时间
+
+        timePointToNow(maskStr, periods, times);
+        twoTimeExtract(maskStr, periods, times);
+        oneTimePointExtract(maskStr, periods, times);
 
     }
 
@@ -88,15 +109,15 @@ public class PeriodNormalizer {
      * @date 2019/6/4 11:26
      * @param
      * @return
-     * @description 过去的单时间点至今 (最近五月)
+     * @description 过去的一段时间点至今 (最近五月, 近3年)
      */
-    private String oneTimeToNowExtract(String maskStr, String originStr,
-                                       List<PeriodUnit> periods, List<TimeUnit> times){
+    private String lastTimeExtract(String originStr, List<PeriodUnit> periods){
         /**
          *先匹配不需要时间抽取的(近5年,近3月, 近一周)
          */
-        Pattern pattern = PATTERNS.get("oneTimeToNow1");
+        Pattern pattern = PATTERNS.get("lastTime");
         Matcher matcher;
+        String  maskStr = originStr;
         matcher = pattern.matcher(originStr);
         while (matcher.find()) {
             List<String> timeMarks = new ArrayList<>();
@@ -118,13 +139,26 @@ public class PeriodNormalizer {
                 );
                 periods.add(period);
                 maskStr = matcher.replaceFirst("近xxx");
+                timeNormalizer.parse(maskStr);
             }
         }
+        return maskStr;
+    }
+
+
+    /**
+     * @author LinZheng Chai
+     * @date 2019/6/5 21:04
+     * @param
+     * @return
+     * @description
+     */
+    public void timePointToNow(String maskStr, List<PeriodUnit> periods, List<TimeUnit> times){
         /**
          * 匹配需要时间抽取的(去年至今, 4月以来)
          */
-        pattern = PATTERNS.get("oneTimeToNow2");
-        matcher = pattern.matcher(maskStr);
+        Pattern pattern = PATTERNS.get("timePointToNow");
+        Matcher matcher = pattern.matcher(maskStr);
         //System.out.println("patterns: "+ pattern);
         //System.out.println("Str: "+ maskStr);
         while (matcher.find()){
@@ -153,18 +187,17 @@ public class PeriodNormalizer {
                 }
             }
         }
-        return maskStr;
     }
 
 
     /**
-    * @author LinZheng Chai
-    * @date 2019/6/4 11:20
-    * @param
-    * @return
-    * @description 双时间点类型抽取
+     * @author LinZheng Chai
+     * @date 2019/6/4 11:20
+     * @param
+     * @return
+     * @description 双时间点类型抽取
      */
-    private String twoTimeExtract(String maskStr, List<PeriodUnit> periods, List<TimeUnit> times){
+    private void twoTimeExtract(String maskStr, List<PeriodUnit> periods, List<TimeUnit> times){
         Matcher matcher;
         Pattern pattern = PATTERNS.get("twoTime");
         matcher = pattern.matcher(maskStr);
@@ -198,18 +231,17 @@ public class PeriodNormalizer {
                 }
             }
         }
-        return maskStr;
     }
 
 
     /**
-    * @author LinZheng Chai
-    * @date 2019/6/4 11:26
-    * @param
-    * @return
-    * @description 过去的单时间点, (昨天的, 上个月的)
+     * @author LinZheng Chai
+     * @date 2019/6/4 11:26
+     * @param
+     * @return
+     * @description 过去的单时间点, (昨天的, 上个月的)
      */
-    private String oneTimePointExtract(String maskStr, List<PeriodUnit> periods, List<TimeUnit> times){
+    private void oneTimePointExtract(String maskStr, List<PeriodUnit> periods, List<TimeUnit> times){
         Matcher matcher;
         Pattern pattern = PATTERNS.get("oneTimePoint");
         matcher = pattern.matcher(maskStr);
@@ -245,34 +277,31 @@ public class PeriodNormalizer {
                 }
             }
         }
-        return maskStr;
     }
 
 
 
     /**
-    * @author LinZheng Chai
-    * @date 2019/6/4 0:03
-    * @param
-    * @return
-    * @description 进行时间抽取
+     * @author LinZheng Chai
+     * @date 2019/6/4 0:03
+     * @param
+     * @return
+     * @description 进行时间抽取
      */
-    private List<TimeUnit> parseTime(String target) throws URISyntaxException {
-//        URL url = TimeNormalizer.class.getResource("/TimeExp.m");
-        //System.out.println(url.toURI().toString());
-//        timeNormalizer = new TimeNormalizer(url.toURI().toString());
-        timeNormalizer = new TimeNormalizer(this.modelPath);
+    private List<TimeUnit> parseTime(String target){
+
+        timeNormalizer = TimeNormalizer.getInstance(this.modelPath);
         //timeNormalizer.setPreferFuture(true);
         TimeUnit[] temp = timeNormalizer.parse(target);
         return new ArrayList<>(Arrays.asList(temp));
     }
 
     /**
-    * @author LinZheng Chai
-    * @date 2019/6/4 0:03
-    * @param
-    * @return
-    * @description 待匹配字符串的清理空白符和语气助词以及大写数字转化的预处理
+     * @author LinZheng Chai
+     * @date 2019/6/4 0:03
+     * @param
+     * @return
+     * @description 待匹配字符串的清理空白符和语气助词以及大写数字转化的预处理
      */
     private String preHandling(String str) {
         str = stringPreHandlingModule.delKeyword(str, "\\s+"); // 清理空白符
@@ -284,11 +313,11 @@ public class PeriodNormalizer {
 
 
     /**
-    * @author LinZheng Chai
-    * @date 2019/6/4 0:02
-    * @param
-    * @return
-    * @description 对字符串中的时间进行掩盖, 方便后边正则匹配, 将时间替换为time1, time2....
+     * @author LinZheng Chai
+     * @date 2019/6/4 0:02
+     * @param
+     * @return
+     * @description 对字符串中的时间进行掩盖, 方便后边正则匹配, 将时间替换为time1, time2....
      */
     private String maskTime(String target,List<TimeUnit> times){
         TimeUnit time;
@@ -310,11 +339,11 @@ public class PeriodNormalizer {
     }
 
     /**
-    * @author LinZheng Chai
-    * @date 2019/6/4 0:26
-    * @param
-    * @return
-    * @description 读取正则表达式, 每一组表达式保存在map中
+     * @author LinZheng Chai
+     * @date 2019/6/4 0:26
+     * @param
+     * @return
+     * @description 读取正则表达式, 每一组表达式保存在map中
      */
     private Map<String, Pattern> readModel(String path){
         Map<String, Pattern> regexMap = new HashMap<>();

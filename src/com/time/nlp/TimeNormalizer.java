@@ -43,7 +43,9 @@ public class TimeNormalizer implements Serializable {
 
     private boolean isPreferFuture = true;
 
-    public TimeNormalizer() {
+    private static volatile TimeNormalizer timeNormalizer = null;
+
+    private TimeNormalizer() {
         if (patterns == null) {
             try {
                 InputStream in = getClass().getResourceAsStream("/TimeExp.m");
@@ -58,11 +60,50 @@ public class TimeNormalizer implements Serializable {
     }
 
     /**
+    * @author LinZheng Chai
+    * @date 2019/6/10 17:02
+    * @param
+    * @return
+    * @description Double-Check 实现单例
+     */
+    public static TimeNormalizer getInstance(String modelPath){
+        if (timeNormalizer == null){
+            synchronized (TimeNormalizer.class){
+                if (timeNormalizer == null){
+                    timeNormalizer = new TimeNormalizer(modelPath);
+                }
+            }
+        }
+        return timeNormalizer;
+    }
+    public static TimeNormalizer getInstance(){
+        if (timeNormalizer == null){
+            synchronized (TimeNormalizer.class){
+                if (timeNormalizer == null){
+                    timeNormalizer = new TimeNormalizer();
+                }
+            }
+        }
+        return timeNormalizer;
+    }
+    public static TimeNormalizer getInstance(String modelPath,
+                                             boolean _isPreferFuture){
+        if (timeNormalizer == null){
+            synchronized (TimeNormalizer.class){
+                if (timeNormalizer == null){
+                    timeNormalizer = new TimeNormalizer(modelPath, _isPreferFuture);
+                }
+            }
+        }
+        return timeNormalizer;
+    }
+
+    /**
      * 参数为TimeExp.m文件路径
      *
      * @param path
      */
-    public TimeNormalizer(String path) {
+    private TimeNormalizer(String path) {
         if (patterns == null) {
             try {
                 patterns = readModel(path);
@@ -73,12 +114,14 @@ public class TimeNormalizer implements Serializable {
         }
     }
 
+
+
     /**
      * 参数为TimeExp.m文件路径
      *
      * @param path
      */
-    public TimeNormalizer(String path, boolean isPreferFuture) {
+    private TimeNormalizer(String path, boolean isPreferFuture) {
         this.isPreferFuture = isPreferFuture;
         if (patterns == null) {
             try {
