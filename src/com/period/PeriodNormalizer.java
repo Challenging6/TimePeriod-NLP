@@ -74,7 +74,6 @@ public class PeriodNormalizer {
 
         //需要保持和time包预处理的结果相同，用来定位时间
         target = preHandling(target);
-
         periodExtract(target, periods);
         return periods;
     }
@@ -218,16 +217,20 @@ public class PeriodNormalizer {
                 int no1, no2;
                 no1 = Integer.valueOf(timeMarks.get(1));
                 no2 = Integer.valueOf(timeMarks.get(2));
-                TimeUnit timeStart = times.get(no1);
-                TimeUnit timeEnd = times.get(no2);
-                if (timeStart != null && timeEnd != null) {
+                try {
+                    TimeUnit timeStart = times.get(no1);
+                    TimeUnit timeEnd = times.get(no2);
+                    if (timeStart != null && timeEnd != null) {
 
-                    PeriodUnit period = new PeriodUnit(timeStart, timeEnd);
-                    //System.out.println(period);
-                    periods.add(period);
+                        PeriodUnit period = new PeriodUnit(timeStart, timeEnd, timeNormalizer);
+                        //System.out.println(period);
+                        periods.add(period);
 
-                    times.set(no1, null);
-                    times.set(no2, null);
+                        times.set(no1, null);
+                        times.set(no2, null);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
             }
         }
@@ -290,7 +293,7 @@ public class PeriodNormalizer {
      */
     private List<TimeUnit> parseTime(String target){
 
-        timeNormalizer = TimeNormalizer.getInstance(this.modelPath);
+        timeNormalizer = TimeNormalizer.getInstance(this.modelPath, false);
         //timeNormalizer.setPreferFuture(true);
         TimeUnit[] temp = timeNormalizer.parse(target);
         return new ArrayList<>(Arrays.asList(temp));

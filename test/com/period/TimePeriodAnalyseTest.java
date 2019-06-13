@@ -98,6 +98,9 @@ public class TimePeriodAnalyseTest {
             periods = periodNormalizer.parse("2019年1月10日到2019年");
             System.out.println(periods.get(0));
 
+            periods = periodNormalizer.parse("2019年1月10日到2019年11月");
+            System.out.println(periods.get(0));
+
             // 期望：2019-03-05 00:00:00 - 2019-05-31 00:00:00，解析成月末
             // 结果：2019-03-05 00:00:00 - 2019-05-01 00:00:00
             periods = periodNormalizer.parse("2019年3月5日到2019年5月");
@@ -108,9 +111,14 @@ public class TimePeriodAnalyseTest {
             periods = periodNormalizer.parse("3月到5月");
             System.out.println(periods.get(0));
 
+
+
             // 期望：2019-03-01 00:00:00 - 2019-06-12 00:00:00, 应该是2019年的，6月到当天。
             // 结果：2020-03-01 00:00:00 - 2020-06-01 00:00:00
             periods = periodNormalizer.parse("3月到6月");
+            System.out.println(periods.get(0));
+
+            periods = periodNormalizer.parse("3月到7月");
             System.out.println(periods.get(0));
 
             // 期望：2019-01-01 00:00:00 - 2019-06-12 00:00:00 年初到当天
@@ -118,10 +126,17 @@ public class TimePeriodAnalyseTest {
             periods = periodNormalizer.parse("今年的");
             System.out.println(periods.get(0));
 
+            periods = periodNormalizer.parse("今年的11月");
+            System.out.println(periods.get(0));
+
+
             // 期望：2019-06-01 00:00:00 - 2019-06-12 这个月初到当天
             // 结果：2019-06-01 00:00:00 - 2019-06-30 00:00:00
             periods = periodNormalizer.parse("这个月的");
             System.out.println(periods.get(0));
+
+
+
         }catch (Exception e){
             e.printStackTrace();
         }

@@ -38,18 +38,19 @@ public class TimeAnalyseTest {
         URL url = TimeNormalizer.class.getResource("/TimeExp.m");
         System.out.println(url.toURI().toString());
         TimeNormalizer normalizer = TimeNormalizer.getInstance(url.toURI().toString());
-        normalizer.setPreferFuture(true);
+        normalizer.setPreferFuture(false);
         
         normalizer.parse("Hi，all.近三月");// 抽取时间
         TimeUnit[] unit = normalizer.getTimeUnit();
         System.out.println("Hi，all.");
         System.out.println(DateUtil.formatDateDefault(unit[0].getTime()) + "-" + unit[0].getIsAllDayTime());
 //
-//        normalizer.parse("早上六点起床");// 注意此处识别到6天在今天已经过去，自动识别为明早六点（未来倾向，可通过开关关闭：new TimeNormalizer(classPath+"/TimeExp.m", false)）
-//        unit = normalizer.getTimeUnit();
-//        System.out.println("早上六点起床");
-//        System.out.println(DateUtil.formatDateDefault(unit[0].getTime()) + "-" + unit[0].getIsAllDayTime());
-//
+        normalizer.parse("三月到五月");// 注意此处识别到6天在今天已经过去，自动识别为明早六点（未来倾向，可通过开关关闭：new TimeNormalizer(classPath+"/TimeExp.m", false)）
+        unit = normalizer.getTimeUnit();
+        System.out.println("今年三月到五月");
+        System.out.println(DateUtil.formatDateDefault(unit[0].getTime()) + "-" + unit[0].getIsAllDayTime());
+        System.out.println(DateUtil.formatDateDefault(unit[1].getTime()) + "-" + unit[1].getIsAllDayTime());
+
 //        normalizer.parse("周一开会");// 如果本周已经是周二，识别为下周周一。同理处理各级时间。（未来倾向）
 //        unit = normalizer.getTimeUnit();
 //        System.out.println("周一开会");

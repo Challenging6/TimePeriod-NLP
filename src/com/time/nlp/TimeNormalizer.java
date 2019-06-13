@@ -16,6 +16,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -161,9 +162,8 @@ public class TimeNormalizer implements Serializable {
     public TimeUnit[] parse(String target) {
         this.target = target;
         this.timeBase = new SimpleDateFormat(
-                "yyyy-MM-dd-HH-mm-ss").format(Calendar.getInstance().getTime());// TODO
-        // Calendar.getInstance().getTime()换成new
-        // Date？
+                "yyyy-MM-dd-HH-mm-ss").format(new Date());// TODO
+
         this.oldTimeBase = timeBase;
         preHandling();// 字符串预处理
         timeToken = TimeEx(this.target, timeBase);
@@ -250,6 +250,7 @@ public class TimeNormalizer implements Serializable {
         String[] temp = new String[99];
         int rpointer = 0;// 计数器，记录当前识别到哪一个字符串了
         TimeUnit[] Time_Result = null;
+
 
         match = patterns.matcher(tar);
         boolean startmark = true;
