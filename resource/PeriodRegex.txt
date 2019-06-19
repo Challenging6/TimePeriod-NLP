@@ -8,26 +8,26 @@
 ####lastTime
 ([近这](\d+)个?([年月日周天]))
 (过去(\d+)个?([年月日周天]))
-([近这]time(\d+)([年月日周天]))
-(过去time(\d+)([年月日周天]))
+([近这]#time(\d+)#([年月日周天]))
+(过去#time(\d+)#([年月日周天]))
 ####
 
 //过去某个时间点到今天为止
 ####timePointToNow
-(time(\d+)以?来)
-(time(\d+)至今)
+(#time(\d+)#以?来)
+(#time(\d+)#至今)
 ####
 
 //两个时间点明确的 xx到xx, xx-xx, xx至xx
 ####twoTime
-(time(\d+)到time(\d+))
-(time(\d+)至time(\d+))
-(time(\d+)\-time(\d+))
-(time(\d+)\和time(\d+)[之中]?间)
+(#time(\d+)#到#time(\d+)#)
+(#time(\d+)#至#time(\d+)#)
+(#time(\d+)#\-#time(\d+)#)
+(#time(\d+)#\和#time(\d+)#[之中]?间)
 ####
 
 
 //单时间点的,表示那一天,周,月,年的,今天的,昨天的,去年12月的,上月的,这个月的
 ####oneTimePoint
-(time(\d+))
+(#time(\d+)#)
 ####

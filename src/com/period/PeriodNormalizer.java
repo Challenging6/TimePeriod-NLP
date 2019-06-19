@@ -335,7 +335,7 @@ public class PeriodNormalizer {
             timeEnd = timeStart+timeExp.length()-1;
 
             maskStr = maskStr.substring(0, timeStart)+
-                    "time"+i+maskStr.substring(timeEnd+1);
+                    "#time"+i+"#"+maskStr.substring(timeEnd+1);
             //System.out.println(maskStr);
         }
         return maskStr;

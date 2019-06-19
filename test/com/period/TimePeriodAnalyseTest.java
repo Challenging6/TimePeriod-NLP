@@ -95,7 +95,7 @@ public class TimePeriodAnalyseTest {
 
             // 期望: 2019-01-10 00:00:00 - 2019-06-12 00:00:00 , 后面的2019年要求解析为当天
             // 结果: 2019-01-01 00:00:00 - 2019-01-10 00:00:00
-            periods = periodNormalizer.parse("2019年1月10日到2019年");
+            periods = periodNormalizer.parse("2019年2");
             System.out.println(periods.get(0));
 
             periods = periodNormalizer.parse("2019年1月10日到2019年11月");
