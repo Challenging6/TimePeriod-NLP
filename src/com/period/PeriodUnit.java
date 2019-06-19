@@ -36,6 +36,7 @@ public class PeriodUnit {
         //年份不相同就交换， 相同就先不交换
 
         // 2019年3月到2019年, 6月1日到6月， 5月3日到5月， 5月6日到五月3日
+
         if ((startNorm.charAt(startNorm.length()-1)  == '月' ||
              startNorm.charAt(startNorm.length()-1)  == '日')&&
                 endNorm.charAt(endNorm.length()-1)  == '年' &&
@@ -84,23 +85,24 @@ public class PeriodUnit {
         calendar.setTime(new Date());
         thisYear = calendar.get(Calendar.YEAR);
         thisMonth = calendar.get(Calendar.MONTH);
-
+        boolean makeUp = end.isMakeUp();
         if (lastChar == '月'){
             calendar.setTime(end.getTime()); //TODO 抽象出这块为函数
             calendar.add(Calendar.MONTH, 1);
             calendar.add(Calendar.SECOND, -1);
 
             if (setEnd) {
-                end = new TimeUnit(
+                end = new TimeUnit (
                         formatDate(calendar.getTime()),
                         timeNormalizer,
                         start._tp
                 );
+                end.setMakeUp(makeUp);
             }
             if (calendar.get(Calendar.YEAR) == thisYear &&
                     calendar.get(Calendar.MONTH) == thisMonth
             ){
-                setFutureToToday();
+                setFutureToToday(makeUp);
             }
 
         }
@@ -115,9 +117,10 @@ public class PeriodUnit {
                         timeNormalizer,
                         start._tp
                 );
+                end.setMakeUp(makeUp);
             }
             if (calendar.get(Calendar.YEAR) == thisYear){
-                setFutureToToday();
+                setFutureToToday(makeUp);
             }
         }
     }
@@ -227,10 +230,11 @@ public class PeriodUnit {
     * @return
     * @description 将结束时间中未来时间拉回今天
      */
-    private void setFutureToToday(){
+    private void setFutureToToday(boolean makeUp){
         //Date endDate = end.getTime();
         Calendar calendar = Calendar.getInstance();
-            end = new TimeUnit("今天", timeNormalizer);
+        end = new TimeUnit("今天", timeNormalizer);
+        end.setMakeUp(makeUp);
     }
 
     /**
@@ -333,9 +337,12 @@ public class PeriodUnit {
 
     @Override
     public String toString(){
+        System.out.println("开始时间是否补全:"+start.isMakeUp());
+        System.out.println("结束时间是否补全:"+end.isMakeUp());
         return DateUtil.formatDateDefault(start.getTime())
                 +" - "+
                 DateUtil.formatDateDefault(end.getTime())+"\n";
+
     }
 
 }

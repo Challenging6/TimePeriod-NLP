@@ -1,10 +1,7 @@
 package com.time.nlp;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,8 +16,8 @@ import com.time.enums.RangeTimeEnum;
  * @since 2016年5月4日
  */
 public class TimeUnit {
-	//有需要可使用
-	//private static final Logger LOGGER = LoggerFactory.getLogger(TimeUnit.class);
+    //有需要可使用
+    //private static final Logger LOGGER = LoggerFactory.getLogger(TimeUnit.class);
     /**
      * 目标字符串
      */
@@ -35,6 +32,8 @@ public class TimeUnit {
     TimeNormalizer normalizer = null;
     public TimePoint _tp = new TimePoint();
     public TimePoint _tp_origin = new TimePoint();
+
+    private boolean makeUp = false;  // 添加标识位, 判断是否进行过时间补全
 
     /**
      * 时间表达式单元构造方法
@@ -115,8 +114,11 @@ public class TimeUnit {
         if (match.find()) {
             _tp.tunit[1] = Integer.parseInt(match.group());
 
+
+
             /**处理倾向于未来时间的情况  @author kexm*/
             preferFuture(1);
+
         }
     }
 
@@ -184,14 +186,14 @@ public class TimeUnit {
         }
         /*
          * 对关键字：早（包含早上/早晨/早间），上午，中午,午间,下午,午后,晚上,傍晚,晚间,晚,pm,PM的正确时间计算
-		 * 规约：
-		 * 1.中午/午间0-10点视为12-22点
-		 * 2.下午/午后0-11点视为12-23点
-		 * 3.晚上/傍晚/晚间/晚1-11点视为13-23点，12点视为0点
-		 * 4.0-11点pm/PM视为12-23点
-		 * 
-		 * add by kexm
-		 */
+         * 规约：
+         * 1.中午/午间0-10点视为12-22点
+         * 2.下午/午后0-11点视为12-23点
+         * 3.晚上/傍晚/晚间/晚1-11点视为13-23点，12点视为0点
+         * 4.0-11点pm/PM视为12-23点
+         *
+         * add by kexm
+         */
         rule = "凌晨";
         pattern = Pattern.compile(rule);
         match = pattern.matcher(Time_Expression);
@@ -325,11 +327,11 @@ public class TimeUnit {
      * 该方法识别时间表达式单元的秒字段
      */
     public void norm_setsecond() {
-		/*
-		 * 添加了省略“分”说法的时间
-		 * 如17点15分32
-		 * modified by 曹零
-		 */
+        /*
+         * 添加了省略“分”说法的时间
+         * 如17点15分32
+         * modified by 曹零
+         */
         String rule = "([0-5]?[0-9](?=秒))|((?<=分)[0-5]?[0-9])";
 
         Pattern pattern = Pattern.compile(rule);
@@ -380,11 +382,11 @@ public class TimeUnit {
                 isAllDayTime = false;
             }
         }
-		/*
-		 * 增加了:固定形式时间表达式的
-		 * 中午,午间,下午,午后,晚上,傍晚,晚间,晚,pm,PM
-		 * 的正确时间计算，规约同上
-		 */
+        /*
+         * 增加了:固定形式时间表达式的
+         * 中午,午间,下午,午后,晚上,傍晚,晚间,晚,pm,PM
+         * 的正确时间计算，规约同上
+         */
         rule = "(中午)|(午间)";
         pattern = Pattern.compile(rule);
         match = pattern.matcher(Time_Expression);
@@ -451,11 +453,11 @@ public class TimeUnit {
             _tp.tunit[2] = Integer.parseInt(tmp_parser[1]);
             _tp.tunit[0] = Integer.parseInt(tmp_parser[2]);
         }
-		
-		/*
-		 * 增加了:固定形式时间表达式 年.月.日 的正确识别
-		 * add by 曹零
-		 */
+
+        /*
+         * 增加了:固定形式时间表达式 年.月.日 的正确识别
+         * add by 曹零
+         */
         rule = "[0-9]?[0-9]?[0-9]{2}\\.((10)|(11)|(12)|([1-9]))\\.((?<!\\d))([0-3][0-9]|[1-9])";
         pattern = Pattern.compile(rule);
         match = pattern.matcher(Time_Expression);
@@ -821,6 +823,7 @@ public class TimeUnit {
         normalizer.setTimeBase(s);
     }
 
+
     /**
      * 时间表达式规范化的入口
      * <p>
@@ -829,16 +832,26 @@ public class TimeUnit {
      */
     public void Time_Normalization() {
         norm_setyear();
+
         norm_setmonth();
+
+
+
         norm_setday();
         norm_setmonth_fuzzyday();/**add by kexm*/
+
         norm_setBaseRelated();
         norm_setCurRelated();
         norm_sethour();
+
         norm_setminute();
         norm_setsecond();
+
         norm_setTotal();
         modifyTimeBase();
+
+
+
 
         _tp_origin.tunit = _tp.tunit.clone();
 
@@ -849,10 +862,15 @@ public class TimeUnit {
         while (tunitpointer >= 0 && _tp.tunit[tunitpointer] < 0) {
             tunitpointer--;
         }
+
+        //进行时间补全
         for (int i = 0; i < tunitpointer; i++) {
-            if (_tp.tunit[i] < 0)
+            if (_tp.tunit[i] < 0) {
                 _tp.tunit[i] = Integer.parseInt(time_grid[i]);
+                makeUp = true;
+            }
         }
+
         String[] _result_tmp = new String[6];
         _result_tmp[0] = String.valueOf(_tp.tunit[0]);
         if (_tp.tunit[0] >= 10 && _tp.tunit[0] < 100) {
@@ -895,7 +913,7 @@ public class TimeUnit {
         time = cale.getTime();
 
         time_full = _tp.tunit.clone();
-//		time_origin = _tp_origin.tunit.clone(); comment by kexm
+
     }
 
     public Boolean getIsAllDayTime() {
@@ -923,8 +941,10 @@ public class TimeUnit {
         for (int i = 0; i < checkTimeIndex; i++) {
             if (_tp.tunit[i] != -1) return;
         }
+
         /**2. 根据上下文补充时间*/
         checkContextTime(checkTimeIndex);
+
         /**3. 根据上下文补充时间后再次检查被检查的时间级别之前，是否没有更高级的已经确定的时间，如果有，则不进行倾向处理.*/
         for (int i = 0; i < checkTimeIndex; i++) {
             if (_tp.tunit[i] != -1) return;
@@ -999,16 +1019,39 @@ public class TimeUnit {
      * 根据上下文时间补充时间信息
      */
     private void checkContextTime(int checkTimeIndex) {
+
         for (int i = 0; i < checkTimeIndex; i++) {
+
+//            System.out.println("origin: "+Arrays.toString(_tp_origin.tunit));
+//            System.out.println("this: "+Arrays.toString(_tp.tunit));
+
             if (_tp.tunit[i] == -1 && _tp_origin.tunit[i] != -1) {
+                makeUp = true;
                 _tp.tunit[i] = _tp_origin.tunit[i];
             }
         }
+
         /**在处理小时这个级别时，如果上文时间是下午的且下文没有主动声明小时级别以上的时间，则也把下文时间设为下午*/
         if (isFirstTimeSolveContext == true && checkTimeIndex == 3 && _tp_origin.tunit[checkTimeIndex] >= 12 && _tp.tunit[checkTimeIndex] < 12) {
             _tp.tunit[checkTimeIndex] += 12;
         }
         isFirstTimeSolveContext = false;
+    }
+
+
+    /**
+    * @author LinZheng Chai
+    * @date 2019/6/19 17:16
+    * @param
+    * @return
+    * @description 查询是否进行过时间补全
+     */
+    public boolean isMakeUp() {
+        return makeUp;
+    }
+
+    public void setMakeUp(boolean makeUp) {
+        this.makeUp = makeUp;
     }
 
     private static Map<Integer, Integer> TUNIT_MAP = new HashMap<>();
@@ -1021,4 +1064,7 @@ public class TimeUnit {
         TUNIT_MAP.put(4, Calendar.MINUTE);
         TUNIT_MAP.put(5, Calendar.SECOND);
     }
+
+
+
 }
