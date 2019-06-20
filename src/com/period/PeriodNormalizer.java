@@ -97,6 +97,8 @@ public class PeriodNormalizer {
         times = parseTime(maskStr);        //抽取时间
         maskStr = maskTime(target, times); //标记时间
 
+        //System.out.println(Arrays.toString(times.toArray()));
+
         timePointToNow(maskStr, periods, times);
         twoTimeExtract(maskStr, periods, times);
         oneTimePointExtract(maskStr, periods, times);
@@ -335,7 +337,7 @@ public class PeriodNormalizer {
             timeEnd = timeStart+timeExp.length()-1;
 
             maskStr = maskStr.substring(0, timeStart)+
-                    "time"+i+maskStr.substring(timeEnd+1);
+                    "#time"+i+"#"+maskStr.substring(timeEnd+1);
             //System.out.println(maskStr);
         }
         return maskStr;
