@@ -1,6 +1,7 @@
 package com.period;
 
 import com.time.nlp.TimeNormalizer;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.net.URL;
@@ -144,6 +145,40 @@ public class TimePeriodAnalyseTest {
 
 
         }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testCTM() {
+        try {
+            URL url = TimeNormalizer.class.getResource("/TimeExp.m");
+            PeriodNormalizer periodNormalizer = PeriodNormalizer.getInstance(url.toURI().toString());
+            List<PeriodUnit> periods;
+
+            // 现在是2019年7月17日
+            periods = periodNormalizer.parse("7月10日");
+            Assert.assertEquals("2019-07-10 00:00:00 - 2019-07-10 23:59:59", periods.get(0).toString().trim());
+
+            periods = periodNormalizer.parse("7月30日");
+            Assert.assertEquals("2018-07-30 00:00:00 - 2018-07-30 23:59:59", periods.get(0).toString().trim());
+
+            periods = periodNormalizer.parse("20190710");
+            Assert.assertEquals("2019-07-10 00:00:00 - 2019-07-10 23:59:59", periods.get(0).toString().trim());
+
+            periods = periodNormalizer.parse("2019.07.10");
+            Assert.assertEquals("2019-07-10 00:00:00 - 2019-07-10 23:59:59", periods.get(0).toString().trim());
+
+            periods = periodNormalizer.parse("2019。07。10");
+            Assert.assertEquals("2019-07-10 00:00:00 - 2019-07-10 23:59:59", periods.get(0).toString().trim());
+
+            periods = periodNormalizer.parse("2019-07-10");
+            Assert.assertEquals("2019-07-10 00:00:00 - 2019-07-10 23:59:59", periods.get(0).toString().trim());
+
+            periods = periodNormalizer.parse("2019/07/10");
+            Assert.assertEquals("2019-07-10 00:00:00 - 2019-07-10 23:59:59", periods.get(0).toString().trim());
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
