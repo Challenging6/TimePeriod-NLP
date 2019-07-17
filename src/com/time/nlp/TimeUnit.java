@@ -16,7 +16,11 @@ import com.time.enums.RangeTimeEnum;
  * @since 2016年5月4日
  */
 public class TimeUnit {
-    //有需要可使用
+    public void setTime(Date time) {
+		this.time = time;
+	}
+
+	//有需要可使用
     //private static final Logger LOGGER = LoggerFactory.getLogger(TimeUnit.class);
     /**
      * 目标字符串
