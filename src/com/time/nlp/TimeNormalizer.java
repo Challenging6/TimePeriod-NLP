@@ -246,18 +246,21 @@ public class TimeNormalizer implements Serializable {
 				if (timeUnit.getTime().after(curDate) && timeUnit.Time_Expression.contains("月")
 						&& !timeUnit.Time_Expression.contains("日") && !timeUnit.Time_Expression.contains("号")) {
 					// 往前算一个年
-					c.setTime(timeUnit.getTime());
-					c.add(Calendar.YEAR, -1);
-					timeUnit.setTime(c.getTime());
-					// 修改时间标准表达
-					String timeNorm = timeUnit.Time_Norm;
-					String pattern = "(?<year>[0-9]+)年";
-					Matcher matcher = Pattern.compile(pattern).matcher(timeNorm);
-					while (matcher.find()) {
-						String matchedStr = matcher.group("year");
-						int month = Integer.parseInt(matchedStr) - 1;
-						timeNorm = timeNorm.replace(matchedStr + "年", Integer.toString(month) + "年");
-						timeUnit.Time_Norm = timeNorm;
+					if (this.validateType.equals("winner")) {
+						c.setTime(timeUnit.getTime());
+						c.add(Calendar.YEAR, -1);
+						timeUnit.setTime(c.getTime());
+
+						// 修改时间标准表达
+						String timeNorm = timeUnit.Time_Norm;
+						String pattern = "(?<year>[0-9]+)年";
+						Matcher matcher = Pattern.compile(pattern).matcher(timeNorm);
+						while (matcher.find()) {
+							String matchedStr = matcher.group("year");
+							int month = Integer.parseInt(matchedStr) - 1;
+							timeNorm = timeNorm.replace(matchedStr + "年", Integer.toString(month) + "年");
+							timeUnit.Time_Norm = timeNorm;
+						}
 					}
 				}
 			}
