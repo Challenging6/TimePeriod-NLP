@@ -9,6 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,7 +20,6 @@ import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import org.apache.commons.lang3.builder.EqualsExclude;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,13 +113,9 @@ public class TimeNormalizer implements Serializable {
 		if (patterns == null) {
 			try {
 				patterns = readModel(path);
-
-				// 获取resource文件夹目录
-				String rootPath = FileUtil.getResourceAbsPath();
-				// 全局配置的绝对路径
-				String absFilePath = rootPath.concat("time-config.properties");
+				URL url = TimeNormalizer.class.getResource("/time-config.properties");
 				// 获取时间配置
-				this.validateType = PropFileLoader.load(absFilePath).getProperty("name");
+				this.validateType = PropFileLoader.load(url.getFile()).getProperty("name");
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.err.print("Read model error!");
@@ -137,6 +133,9 @@ public class TimeNormalizer implements Serializable {
 		if (patterns == null) {
 			try {
 				patterns = readModel(path);
+				URL url = TimeNormalizer.class.getResource("/time-config.properties");
+				// 获取时间配置
+				this.validateType = PropFileLoader.load(url.getFile()).getProperty("name");
 				LOGGER.debug("loaded pattern:{}", patterns.pattern());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -185,87 +184,67 @@ public class TimeNormalizer implements Serializable {
 	 * 
 	 */
 	private void validateTime() {
+		Calendar c = Calendar.getInstance();
+		// 获取当前日期
+		Date curDate = new Date();
 		switch (this.validateType) {
 		// 赢家系统
 		case "winner":
-			for (TimeUnit timeUnit : this.timeToken) {
-				Calendar c = Calendar.getInstance();
-				// 获取当前日期
-				Date curDate = new Date();
-				// 修正比较日期
-				c.setTime(curDate);
-				c.add(Calendar.DATE, -1);
-				curDate = c.getTime();
-				// 如果抽取时间大于当前时间
-				if (timeUnit.getTime().after(curDate)) {
-					// 不包含月月份信息
-					if (!timeUnit.Time_Expression.contains("月")) {
-						// 往前算一个月
-						c.setTime(timeUnit.getTime());
-						c.add(Calendar.MONTH, -1);
-						timeUnit.setTime(c.getTime());
-						// 修改时间标准表达
-						String timeNorm = timeUnit.Time_Norm;
-						String pattern = "年(?<month>[0-9]+)月";
-						Matcher matcher = Pattern.compile(pattern).matcher(timeNorm);
-						while (matcher.find()) {
-							String matchedStr = matcher.group("month");
-							int month = Integer.parseInt(matchedStr) - 1;
-							timeNorm = timeNorm.replace(matchedStr + "月", Integer.toString(month) + "月");
-							timeUnit.Time_Norm = timeNorm;
-						}
-					} else {
-						// 有月和日的，对年份进行调整
-						// 往前算一个年
-						c.setTime(timeUnit.getTime());
-						c.add(Calendar.YEAR, -1);
-						timeUnit.setTime(c.getTime());
-						// 修改时间标准表达
-						String timeNorm = timeUnit.Time_Norm;
-						String pattern = "(?<year>[0-9]+)年";
-						Matcher matcher = Pattern.compile(pattern).matcher(timeNorm);
-						while (matcher.find()) {
-							String matchedStr = matcher.group("year");
-							int month = Integer.parseInt(matchedStr) - 1;
-							timeNorm = timeNorm.replace(matchedStr + "年", Integer.toString(month) + "年");
-							timeUnit.Time_Norm = timeNorm;
-						}
-					}
-				} else {
-					// 不包含日的信息，仅包含月份，修改年
-					// 月份相同
-					c.setTime(curDate);
-					c.add(Calendar.MONTH, -1);
-					curDate = c.getTime();
-					if (timeUnit.getTime().after(curDate) && timeUnit.Time_Expression.contains("月")
-							&& !timeUnit.Time_Expression.contains("日") && !timeUnit.Time_Expression.contains("号")) {
-						// 往前算一个年
-						c.setTime(timeUnit.getTime());
-						c.add(Calendar.YEAR, -1);
-						timeUnit.setTime(c.getTime());
-						// 修改时间标准表达
-						String timeNorm = timeUnit.Time_Norm;
-						String pattern = "(?<year>[0-9]+)年";
-						Matcher matcher = Pattern.compile(pattern).matcher(timeNorm);
-						while (matcher.find()) {
-							String matchedStr = matcher.group("year");
-							int month = Integer.parseInt(matchedStr) - 1;
-							timeNorm = timeNorm.replace(matchedStr + "年", Integer.toString(month) + "年");
-							timeUnit.Time_Norm = timeNorm;
-						}
-					}
-				}
-			}
+			// 修正比较日期
+			c.setTime(curDate);
+			c.add(Calendar.DATE, -1);
+			curDate = c.getTime();
 			break;
 		// cmt系统
 		case "cmt":
-			for (TimeUnit timeUnit : this.timeToken) {
-				Calendar c = Calendar.getInstance();
-				// 获取当前日期
-				c.add(Calendar.MONTH, 0);
-				c.set(Calendar.DAY_OF_MONTH,1);
-				Date curDate = c.getTime();
-				if (timeUnit.getTime().after(curDate)) {
+			break;
+		default:
+			break;
+		}
+		for (TimeUnit timeUnit : this.timeToken) {
+			// 如果抽取时间大于当前时间
+			if (timeUnit.getTime().after(curDate)) {
+				// 不包含月月份信息
+				if (!timeUnit.Time_Expression.contains("月")) {
+					// 往前算一个月
+					c.setTime(timeUnit.getTime());
+					c.add(Calendar.MONTH, -1);
+					timeUnit.setTime(c.getTime());
+					// 修改时间标准表达
+					String timeNorm = timeUnit.Time_Norm;
+					String pattern = "年(?<month>[0-9]+)月";
+					Matcher matcher = Pattern.compile(pattern).matcher(timeNorm);
+					while (matcher.find()) {
+						String matchedStr = matcher.group("month");
+						int month = Integer.parseInt(matchedStr) - 1;
+						timeNorm = timeNorm.replace(matchedStr + "月", Integer.toString(month) + "月");
+						timeUnit.Time_Norm = timeNorm;
+					}
+				} else {
+					// 有月和日的，对年份进行调整
+					// 往前算一个年
+					c.setTime(timeUnit.getTime());
+					c.add(Calendar.YEAR, -1);
+					timeUnit.setTime(c.getTime());
+					// 修改时间标准表达
+					String timeNorm = timeUnit.Time_Norm;
+					String pattern = "(?<year>[0-9]+)年";
+					Matcher matcher = Pattern.compile(pattern).matcher(timeNorm);
+					while (matcher.find()) {
+						String matchedStr = matcher.group("year");
+						int month = Integer.parseInt(matchedStr) - 1;
+						timeNorm = timeNorm.replace(matchedStr + "年", Integer.toString(month) + "年");
+						timeUnit.Time_Norm = timeNorm;
+					}
+				}
+			} else {
+				// 不包含日的信息，仅包含月份，修改年
+				// 月份相同
+				c.setTime(curDate);
+				c.add(Calendar.MONTH, -1);
+				curDate = c.getTime();
+				if (timeUnit.getTime().after(curDate) && timeUnit.Time_Expression.contains("月")
+						&& !timeUnit.Time_Expression.contains("日") && !timeUnit.Time_Expression.contains("号")) {
 					// 往前算一个年
 					c.setTime(timeUnit.getTime());
 					c.add(Calendar.YEAR, -1);
@@ -282,9 +261,6 @@ public class TimeNormalizer implements Serializable {
 					}
 				}
 			}
-			break;
-		default:
-			break;
 		}
 
 	}
@@ -447,16 +423,50 @@ public class TimeNormalizer implements Serializable {
 		out.close();
 	}
 
+	/**
+	 * 重写模型
+	 * 
+	 * @author Xianjie Wu wuxianjie@ai-strong.com
+	 * @param pattern
+	 */
+	public static void reWriteModel() {
+		// 获取resource文件夹目录
+		String rootPath = FileUtil.getResourceAbsPath();
+		// 全局配置的绝对路径
+		String filePath = rootPath.concat("TimeExp.txt");
+		String pattern = FileUtil.readAllLinesOrExit(Paths.get(filePath)).get(0);
+		// 修改模型
+		String path = TimeNormalizer.class.getResource("").getPath();
+		String classPath = path.substring(0, path.indexOf("/com/time"));
+		System.out.println(classPath + "/TimeExp.m");
+		/** 写TimeExp */
+		Pattern p = Pattern.compile(pattern);
+		try {
+			TimeNormalizer.writeModel(p, classPath + "/TimeExp.m");
+			System.out.println("写入完成");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static void main(String args[]) throws Exception {
+		// 重写模型
+		TimeNormalizer.reWriteModel();
+		// 测试
 		URL url = TimeNormalizer.class.getResource("/TimeExp.m");
-		System.out.println(url.toURI().toString());
 		TimeNormalizer normalizer = TimeNormalizer.getInstance(url.toURI().toString());
 		normalizer.setPreferFuture(false);
-		System.out.println(normalizer.validateType);
-		normalizer.parse("打印6月17号的流水账单");// 抽取时间
+		System.out.println("系统类型：" + normalizer.validateType);
+		normalizer.parse("打印7月的流水账单");// 抽取时间
 		TimeUnit[] unit = normalizer.getTimeUnit();
-		System.out.println(DateUtil.formatDateDefault(unit[0].getTime()) + "-" + unit[0].getIsAllDayTime() + " "
-				+ unit[0].Time_Norm);
+		if (unit.length > 0) {
+			for (TimeUnit timeUnit : unit) {
+				System.out.println(DateUtil.formatDateDefault(timeUnit.getTime()) + "-" + timeUnit.getIsAllDayTime()
+						+ " " + timeUnit.Time_Norm);
+			}
+		} else {
+			System.err.println("未抽取到时间！");
+		}
 	}
 
 }

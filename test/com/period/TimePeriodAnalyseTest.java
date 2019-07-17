@@ -2,6 +2,7 @@ package com.period;
 
 import com.time.nlp.TimeNormalizer;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.net.URL;
@@ -35,6 +36,7 @@ public class TimePeriodAnalyseTest {
      */
 
     @Test
+    @Ignore
     public void simpleTest(){
         try {
             URL url = TimeNormalizer.class.getResource("/TimeExp.m");
@@ -87,6 +89,7 @@ public class TimePeriodAnalyseTest {
     }
 
     @Test
+    @Ignore
     public void newTest() {
         try {
             URL url = TimeNormalizer.class.getResource("/TimeExp.m");
