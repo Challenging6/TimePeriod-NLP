@@ -23,6 +23,7 @@ import java.util.zip.GZIPOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.time.enums.SpTimeExp;
 import com.time.util.DateUtil;
 import com.time.util.FileUtil;
 import com.time.util.PropFileLoader;
@@ -171,6 +172,7 @@ public class TimeNormalizer implements Serializable {
 	 */
 	public TimeUnit[] parse(String target) {
 		this.target = target;
+		System.out.println("Parsing: " + target);
 		this.timeBase = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());// TODO
 		this.oldTimeBase = timeBase;
 		preHandling();// 字符串预处理
@@ -187,21 +189,23 @@ public class TimeNormalizer implements Serializable {
 		Calendar c = Calendar.getInstance();
 		// 获取当前日期
 		Date curDate = new Date();
-		switch (this.validateType) {
-		// 赢家系统
-		case "winner":
-			// 修正比较日期
-			c.setTime(curDate);
-			c.add(Calendar.DATE, -1);
-			curDate = c.getTime();
-			break;
-		// cmt系统
-		case "cmt":
-			break;
-		default:
-			break;
-		}
 		for (TimeUnit timeUnit : this.timeToken) {
+			// 修正当前时间
+			switch (this.validateType) {
+			// 赢家系统
+			case "winner":
+				// 修正比较日期
+				c.setTime(curDate);
+				c.add(Calendar.DATE, -1);
+				curDate = c.getTime();
+				break;
+			// cmt系统
+			case "cmt":
+				curDate = new Date();
+				break;
+			default:
+				break;
+			}
 			// 如果抽取时间大于当前时间
 			if (timeUnit.getTime().after(curDate)) {
 				// 不包含月月份信息
@@ -209,6 +213,7 @@ public class TimeNormalizer implements Serializable {
 					// 往前算一个月
 					c.setTime(timeUnit.getTime());
 					c.add(Calendar.MONTH, -1);
+					// 修改时间值
 					timeUnit.setTime(c.getTime());
 					// 修改时间标准表达
 					String timeNorm = timeUnit.Time_Norm;
@@ -220,7 +225,10 @@ public class TimeNormalizer implements Serializable {
 						timeNorm = timeNorm.replace(matchedStr + "月", Integer.toString(month) + "月");
 						timeUnit.Time_Norm = timeNorm;
 					}
-				} else {
+					// 修改时间修正标志位
+					timeUnit.setModified(true);
+					timeUnit.modifiedType = "month-1";
+				} else if (!timeUnit.Time_Expression.contains("年")) {
 					// 有月和日的，对年份进行调整
 					// 往前算一个年
 					c.setTime(timeUnit.getTime());
@@ -236,6 +244,8 @@ public class TimeNormalizer implements Serializable {
 						timeNorm = timeNorm.replace(matchedStr + "年", Integer.toString(month) + "年");
 						timeUnit.Time_Norm = timeNorm;
 					}
+					timeUnit.setModified(true);
+					timeUnit.modifiedType = "year-1";
 				}
 			} else {
 				// 不包含日的信息，仅包含月份，修改年
@@ -244,13 +254,13 @@ public class TimeNormalizer implements Serializable {
 				c.add(Calendar.MONTH, -1);
 				curDate = c.getTime();
 				if (timeUnit.getTime().after(curDate) && timeUnit.Time_Expression.contains("月")
-						&& !timeUnit.Time_Expression.contains("日") && !timeUnit.Time_Expression.contains("号")) {
+						&& !timeUnit.Time_Expression.contains("日") && !timeUnit.Time_Expression.contains("号")
+						&& !timeUnit.Time_Expression.contains("年")) {
 					// 往前算一个年
 					if (this.validateType.equals("winner")) {
 						c.setTime(timeUnit.getTime());
 						c.add(Calendar.YEAR, -1);
 						timeUnit.setTime(c.getTime());
-
 						// 修改时间标准表达
 						String timeNorm = timeUnit.Time_Norm;
 						String pattern = "(?<year>[0-9]+)年";
@@ -261,6 +271,8 @@ public class TimeNormalizer implements Serializable {
 							timeNorm = timeNorm.replace(matchedStr + "年", Integer.toString(month) + "年");
 							timeUnit.Time_Norm = timeNorm;
 						}
+						timeUnit.setModified(true);
+						timeUnit.modifiedType = "month-1";
 					}
 				}
 			}
@@ -325,8 +337,22 @@ public class TimeNormalizer implements Serializable {
 	private void preHandling() {
 		target = stringPreHandlingModule.delKeyword(target, "\\s+"); // 清理空白符
 		target = stringPreHandlingModule.delKeyword(target, "[的]+"); // 清理语气助词
-		target = stringPreHandlingModule.numberTranslator(target);// 大写数字转化
+		// 处理特殊时间
+		int i = 0;
+		for (SpTimeExp spTimeExp : SpTimeExp.values()) {
+			for (int j = 0; j < spTimeExp.getExps().length; j++) {
+				String timeExp = spTimeExp.getExps()[j];
+				if (target.contains(timeExp)) {
+					String repStr = "#sptime" + i + "#" + j + "#";
+					target = target.replaceAll(timeExp, repStr);
+				}
+			}
+			i++;
+		}
+		// 大写数字转化
+		target = stringPreHandlingModule.numberTranslator(target);
 		// TODO 处理大小写标点符号
+
 	}
 
 	/**
@@ -460,7 +486,7 @@ public class TimeNormalizer implements Serializable {
 		TimeNormalizer normalizer = TimeNormalizer.getInstance(url.toURI().toString());
 		normalizer.setPreferFuture(false);
 		System.out.println("系统类型：" + normalizer.validateType);
-		normalizer.parse("打印7月的流水账单");// 抽取时间
+		normalizer.parse("打印去年的流水账单");// 抽取时间
 		TimeUnit[] unit = normalizer.getTimeUnit();
 		if (unit.length > 0) {
 			for (TimeUnit timeUnit : unit) {
