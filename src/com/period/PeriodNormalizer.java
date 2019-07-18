@@ -300,6 +300,23 @@ public class PeriodNormalizer {
 	private String preHandling(String str) {
 		str = stringPreHandlingModule.delKeyword(str, "\\s+"); // 清理空白符
 		str = stringPreHandlingModule.delKeyword(str, "[的]+"); // 清理语气助词
+		// 时间表表达格式标准化
+		String pattern = "(?<year>(19|20|21)[0-9]{2})[\\.\\。\\-\\/]?(?<month>(0[1-9]|1[0-1]))[\\.\\。\\-\\/]?(?<day>(0[1-9]|[1-2][0-9]|3[0-1]))";
+		Matcher matcher = Pattern.compile(pattern).matcher(str);
+		while (matcher.find()) {
+			String matchedStr = matcher.group(0);
+			String year = matcher.group("year");
+			String month = matcher.group("month");
+			if (month.startsWith("0")) {
+				month = month.substring(1);
+			}
+			String day = matcher.group("day");
+			if (day.startsWith("0")) {
+				day = day.substring(1);
+			}
+			String repStr = year + "年" + month + "月" + day + "日";
+			str = str.replace(matchedStr, repStr);
+		}
 		str = stringPreHandlingModule.numberTranslator(str);// 大写数字转化
 		// TODO 处理大小写标点符号
 		return str;
@@ -387,7 +404,7 @@ public class PeriodNormalizer {
 		try {
 			periodNormalizer = PeriodNormalizer.getInstance(url.toURI().toString());
 			List<PeriodUnit> periods;
-			periods = periodNormalizer.parse("3月到8月");
+			periods = periodNormalizer.parse("20190710");
 			System.out.println(periods.get(0).toString().trim());
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
