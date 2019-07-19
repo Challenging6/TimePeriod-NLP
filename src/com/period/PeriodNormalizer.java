@@ -37,6 +37,13 @@ public class PeriodNormalizer {
 		try {
 			this.modelPath = modelPath;
 			PATTERNS = readModel(REGEX_FILES); // 加载正则
+			// 初始化TimeNormalizer
+			try {
+				timeNormalizer = (TimeNormalizer) TimeNormalizer.getInstance(this.modelPath, false).clone();
+				timeNormalizer.validateType = "cmt";
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -284,14 +291,7 @@ public class PeriodNormalizer {
 	 */
 	private List<TimeUnit> parseTime(String target) {
 
-		try {
-			timeNormalizer = (TimeNormalizer) TimeNormalizer.getInstance(this.modelPath, false).clone();
-		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
-		}
 		// timeNormalizer.setPreferFuture(true);
-		// 默认时间段抽取结果为cmt系统
-		timeNormalizer.validateType = "cmt";
 		TimeUnit[] temp = timeNormalizer.parse(target);
 		return new ArrayList<>(Arrays.asList(temp));
 	}
