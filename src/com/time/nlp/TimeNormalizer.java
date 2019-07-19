@@ -23,9 +23,9 @@ import java.util.zip.GZIPOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.time.enums.SpTimeExp;
 import com.time.util.DateUtil;
 import com.time.util.FileUtil;
-import com.time.util.PropFileLoader;
 
 /**
  * <p>
@@ -35,7 +35,7 @@ import com.time.util.PropFileLoader;
  * @author <a href="mailto:kexm@corp.21cn.com">kexm</a>
  * @since 2016年5月4日
  */
-public class TimeNormalizer implements Serializable {
+public class TimeNormalizer implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 463541045644656392L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(TimeNormalizer.class);
@@ -50,14 +50,61 @@ public class TimeNormalizer implements Serializable {
 	// 校验系统类型
 	public String validateType;
 
-	private TimeNormalizer() {
+	protected TimeNormalizer() {
 		if (patterns == null) {
 			try {
 				InputStream in = getClass().getResourceAsStream("/TimeExp.m");
 				ObjectInputStream objectInputStream = new ObjectInputStream(
 						new BufferedInputStream(new GZIPInputStream(in)));
 				patterns = readModel(objectInputStream);
+				// 默认为赢家系统调用
+				this.validateType = "winner";
 			} catch (Exception e) {
+				e.printStackTrace();
+				System.err.print("Read model error!");
+			}
+		}
+	}
+
+	/**
+	 * 参数为TimeExp.m文件路径
+	 *
+	 * @param path
+	 */
+	protected TimeNormalizer(String path) {
+		if (patterns == null) {
+			try {
+				patterns = readModel(path);
+				URL url = TimeNormalizer.class.getResource("/time-config.properties");
+				// 获取时间配置
+//				this.validateType = PropFileLoader.load(url.getFile()).getProperty("name");
+				// 默认为赢家系统调用
+				this.validateType = "winner";
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.err.print("Read model error!");
+			}
+		}
+	}
+
+	/**
+	 * 参数为TimeExp.m文件路径
+	 *
+	 * @param path
+	 */
+	protected TimeNormalizer(String path, boolean isPreferFuture) {
+		this.isPreferFuture = isPreferFuture;
+		if (patterns == null) {
+			try {
+				patterns = readModel(path);
+				URL url = TimeNormalizer.class.getResource("/time-config.properties");
+				// 获取时间配置
+//				this.validateType = PropFileLoader.load(url.getFile()).getProperty("name");
+				// 默认为赢家系统调用
+				this.validateType = "winner";
+				LOGGER.debug("loaded pattern:{}", patterns.pattern());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 				System.err.print("Read model error!");
 			}
@@ -105,47 +152,6 @@ public class TimeNormalizer implements Serializable {
 	}
 
 	/**
-	 * 参数为TimeExp.m文件路径
-	 *
-	 * @param path
-	 */
-	private TimeNormalizer(String path) {
-		if (patterns == null) {
-			try {
-				patterns = readModel(path);
-				URL url = TimeNormalizer.class.getResource("/time-config.properties");
-				// 获取时间配置
-				this.validateType = PropFileLoader.load(url.getFile()).getProperty("name");
-			} catch (Exception e) {
-				e.printStackTrace();
-				System.err.print("Read model error!");
-			}
-		}
-	}
-
-	/**
-	 * 参数为TimeExp.m文件路径
-	 *
-	 * @param path
-	 */
-	private TimeNormalizer(String path, boolean isPreferFuture) {
-		this.isPreferFuture = isPreferFuture;
-		if (patterns == null) {
-			try {
-				patterns = readModel(path);
-				URL url = TimeNormalizer.class.getResource("/time-config.properties");
-				// 获取时间配置
-				this.validateType = PropFileLoader.load(url.getFile()).getProperty("name");
-				LOGGER.debug("loaded pattern:{}", patterns.pattern());
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				System.err.print("Read model error!");
-			}
-		}
-	}
-
-	/**
 	 * TimeNormalizer的构造方法，根据提供的待分析字符串和timeBase进行时间表达式提取 在构造方法中已完成对待分析字符串的表达式提取工作
 	 *
 	 * @param target   待分析字符串
@@ -171,6 +177,7 @@ public class TimeNormalizer implements Serializable {
 	 */
 	public TimeUnit[] parse(String target) {
 		this.target = target;
+		System.out.println("Parsing: " + target);
 		this.timeBase = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());// TODO
 		this.oldTimeBase = timeBase;
 		preHandling();// 字符串预处理
@@ -187,21 +194,23 @@ public class TimeNormalizer implements Serializable {
 		Calendar c = Calendar.getInstance();
 		// 获取当前日期
 		Date curDate = new Date();
-		switch (this.validateType) {
-		// 赢家系统
-		case "winner":
-			// 修正比较日期
-			c.setTime(curDate);
-			c.add(Calendar.DATE, -1);
-			curDate = c.getTime();
-			break;
-		// cmt系统
-		case "cmt":
-			break;
-		default:
-			break;
-		}
 		for (TimeUnit timeUnit : this.timeToken) {
+			// 修正当前时间
+			switch (this.validateType) {
+			// 赢家系统
+			case "winner":
+				// 修正比较日期
+				c.setTime(curDate);
+				c.add(Calendar.DATE, -1);
+				curDate = c.getTime();
+				break;
+			// cmt系统
+			case "cmt":
+				curDate = new Date();
+				break;
+			default:
+				break;
+			}
 			// 如果抽取时间大于当前时间
 			if (timeUnit.getTime().after(curDate)) {
 				// 不包含月月份信息
@@ -209,6 +218,7 @@ public class TimeNormalizer implements Serializable {
 					// 往前算一个月
 					c.setTime(timeUnit.getTime());
 					c.add(Calendar.MONTH, -1);
+					// 修改时间值
 					timeUnit.setTime(c.getTime());
 					// 修改时间标准表达
 					String timeNorm = timeUnit.Time_Norm;
@@ -220,7 +230,10 @@ public class TimeNormalizer implements Serializable {
 						timeNorm = timeNorm.replace(matchedStr + "月", Integer.toString(month) + "月");
 						timeUnit.Time_Norm = timeNorm;
 					}
-				} else {
+					// 修改时间修正标志位
+					timeUnit.setModified(true);
+					timeUnit.modifiedType = "month-1";
+				} else if (!timeUnit.Time_Expression.contains("年")) {
 					// 有月和日的，对年份进行调整
 					// 往前算一个年
 					c.setTime(timeUnit.getTime());
@@ -236,6 +249,8 @@ public class TimeNormalizer implements Serializable {
 						timeNorm = timeNorm.replace(matchedStr + "年", Integer.toString(month) + "年");
 						timeUnit.Time_Norm = timeNorm;
 					}
+					timeUnit.setModified(true);
+					timeUnit.modifiedType = "year-1";
 				}
 			} else {
 				// 不包含日的信息，仅包含月份，修改年
@@ -244,13 +259,13 @@ public class TimeNormalizer implements Serializable {
 				c.add(Calendar.MONTH, -1);
 				curDate = c.getTime();
 				if (timeUnit.getTime().after(curDate) && timeUnit.Time_Expression.contains("月")
-						&& !timeUnit.Time_Expression.contains("日") && !timeUnit.Time_Expression.contains("号")) {
+						&& !timeUnit.Time_Expression.contains("日") && !timeUnit.Time_Expression.contains("号")
+						&& !timeUnit.Time_Expression.contains("年")) {
 					// 往前算一个年
 					if (this.validateType.equals("winner")) {
 						c.setTime(timeUnit.getTime());
 						c.add(Calendar.YEAR, -1);
 						timeUnit.setTime(c.getTime());
-
 						// 修改时间标准表达
 						String timeNorm = timeUnit.Time_Norm;
 						String pattern = "(?<year>[0-9]+)年";
@@ -261,6 +276,8 @@ public class TimeNormalizer implements Serializable {
 							timeNorm = timeNorm.replace(matchedStr + "年", Integer.toString(month) + "年");
 							timeUnit.Time_Norm = timeNorm;
 						}
+						timeUnit.setModified(true);
+						timeUnit.modifiedType = "month-1";
 					}
 				}
 			}
@@ -325,8 +342,39 @@ public class TimeNormalizer implements Serializable {
 	private void preHandling() {
 		target = stringPreHandlingModule.delKeyword(target, "\\s+"); // 清理空白符
 		target = stringPreHandlingModule.delKeyword(target, "[的]+"); // 清理语气助词
-		target = stringPreHandlingModule.numberTranslator(target);// 大写数字转化
+		// 时间表表达格式标准化
+		String pattern = "(?<year>(19|20|21)[0-9]{2})[\\.\\。\\-\\/]?(?<month>(0[1-9]|1[0-1]))[\\.\\。\\-\\/]?(?<day>(0[1-9]|[1-2][0-9]|3[0-1]))";
+		Matcher matcher = Pattern.compile(pattern).matcher(target);
+		while (matcher.find()) {
+			String matchedStr = matcher.group(0);
+			String year = matcher.group("year");
+			String month = matcher.group("month");
+			if (month.startsWith("0")) {
+				month = month.substring(1);
+			}
+			String day = matcher.group("day");
+			if (day.startsWith("0")) {
+				day = day.substring(1);
+			}
+			String repStr = year + "年" + month + "月" + day + "日";
+			target = target.replace(matchedStr, repStr);
+		}
+		// 处理特殊时间
+		int i = 0;
+		for (SpTimeExp spTimeExp : SpTimeExp.values()) {
+			for (int j = 0; j < spTimeExp.getExps().length; j++) {
+				String timeExp = spTimeExp.getExps()[j];
+				if (target.contains(timeExp)) {
+					String repStr = "#sptime" + i + "#" + j + "#";
+					target = target.replaceAll(timeExp, repStr);
+				}
+			}
+			i++;
+		}
+		// 大写数字转化
+		target = stringPreHandlingModule.numberTranslator(target);
 		// TODO 处理大小写标点符号
+
 	}
 
 	/**
@@ -460,7 +508,7 @@ public class TimeNormalizer implements Serializable {
 		TimeNormalizer normalizer = TimeNormalizer.getInstance(url.toURI().toString());
 		normalizer.setPreferFuture(false);
 		System.out.println("系统类型：" + normalizer.validateType);
-		normalizer.parse("打印7月的流水账单");// 抽取时间
+		normalizer.parse("打印19日流水账单");// 抽取时间
 		TimeUnit[] unit = normalizer.getTimeUnit();
 		if (unit.length > 0) {
 			for (TimeUnit timeUnit : unit) {
@@ -470,6 +518,11 @@ public class TimeNormalizer implements Serializable {
 		} else {
 			System.err.println("未抽取到时间！");
 		}
+	}
+
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
 	}
 
 }
