@@ -1,13 +1,13 @@
 package com.period;
 
-import com.time.nlp.TimeNormalizer;
-import com.time.nlp.TimeUnit;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import java.net.URL;
 import java.util.List;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import com.time.nlp.TimeNormalizer;
+import com.time.nlp.TimeUnit;
 
 /**
  * @program: Time Period 基本功能测试
@@ -37,7 +37,6 @@ public class TimePeriodAnalyseTest {
      */
 
     @Test
-    @Ignore
     public void simpleTest(){
         try {
             URL url = TimeNormalizer.class.getResource("/TimeExp.m");
@@ -90,7 +89,6 @@ public class TimePeriodAnalyseTest {
     }
 
     @Test
-    @Ignore
     public void newTest() {
         try {
             URL url = TimeNormalizer.class.getResource("/TimeExp.m");
@@ -221,7 +219,6 @@ public class TimePeriodAnalyseTest {
     }
 
     @Test
-    @Ignore
     public void testYing() {
         try {
             URL url = TimeNormalizer.class.getResource("/TimeExp.m");

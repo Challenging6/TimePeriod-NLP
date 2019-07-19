@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import com.time.enums.SpTimeExp;
 import com.time.util.DateUtil;
 import com.time.util.FileUtil;
-import com.time.util.PropFileLoader;
 
 /**
  * <p>
@@ -36,7 +35,7 @@ import com.time.util.PropFileLoader;
  * @author <a href="mailto:kexm@corp.21cn.com">kexm</a>
  * @since 2016年5月4日
  */
-public class TimeNormalizer implements Serializable {
+public class TimeNormalizer implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 463541045644656392L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(TimeNormalizer.class);
@@ -51,14 +50,61 @@ public class TimeNormalizer implements Serializable {
 	// 校验系统类型
 	public String validateType;
 
-	private TimeNormalizer() {
+	protected TimeNormalizer() {
 		if (patterns == null) {
 			try {
 				InputStream in = getClass().getResourceAsStream("/TimeExp.m");
 				ObjectInputStream objectInputStream = new ObjectInputStream(
 						new BufferedInputStream(new GZIPInputStream(in)));
 				patterns = readModel(objectInputStream);
+				// 默认为赢家系统调用
+				this.validateType = "winner";
 			} catch (Exception e) {
+				e.printStackTrace();
+				System.err.print("Read model error!");
+			}
+		}
+	}
+
+	/**
+	 * 参数为TimeExp.m文件路径
+	 *
+	 * @param path
+	 */
+	protected TimeNormalizer(String path) {
+		if (patterns == null) {
+			try {
+				patterns = readModel(path);
+				URL url = TimeNormalizer.class.getResource("/time-config.properties");
+				// 获取时间配置
+//				this.validateType = PropFileLoader.load(url.getFile()).getProperty("name");
+				// 默认为赢家系统调用
+				this.validateType = "winner";
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.err.print("Read model error!");
+			}
+		}
+	}
+
+	/**
+	 * 参数为TimeExp.m文件路径
+	 *
+	 * @param path
+	 */
+	protected TimeNormalizer(String path, boolean isPreferFuture) {
+		this.isPreferFuture = isPreferFuture;
+		if (patterns == null) {
+			try {
+				patterns = readModel(path);
+				URL url = TimeNormalizer.class.getResource("/time-config.properties");
+				// 获取时间配置
+//				this.validateType = PropFileLoader.load(url.getFile()).getProperty("name");
+				// 默认为赢家系统调用
+				this.validateType = "winner";
+				LOGGER.debug("loaded pattern:{}", patterns.pattern());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 				System.err.print("Read model error!");
 			}
@@ -103,47 +149,6 @@ public class TimeNormalizer implements Serializable {
 			}
 		}
 		return timeNormalizer;
-	}
-
-	/**
-	 * 参数为TimeExp.m文件路径
-	 *
-	 * @param path
-	 */
-	private TimeNormalizer(String path) {
-		if (patterns == null) {
-			try {
-				patterns = readModel(path);
-				URL url = TimeNormalizer.class.getResource("/time-config.properties");
-				// 获取时间配置
-				this.validateType = PropFileLoader.load(url.getFile()).getProperty("name");
-			} catch (Exception e) {
-				e.printStackTrace();
-				System.err.print("Read model error!");
-			}
-		}
-	}
-
-	/**
-	 * 参数为TimeExp.m文件路径
-	 *
-	 * @param path
-	 */
-	private TimeNormalizer(String path, boolean isPreferFuture) {
-		this.isPreferFuture = isPreferFuture;
-		if (patterns == null) {
-			try {
-				patterns = readModel(path);
-				URL url = TimeNormalizer.class.getResource("/time-config.properties");
-				// 获取时间配置
-				this.validateType = PropFileLoader.load(url.getFile()).getProperty("name");
-				LOGGER.debug("loaded pattern:{}", patterns.pattern());
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				System.err.print("Read model error!");
-			}
-		}
 	}
 
 	/**
@@ -503,7 +508,7 @@ public class TimeNormalizer implements Serializable {
 		TimeNormalizer normalizer = TimeNormalizer.getInstance(url.toURI().toString());
 		normalizer.setPreferFuture(false);
 		System.out.println("系统类型：" + normalizer.validateType);
-		normalizer.parse("打印20190710的流水账单");// 抽取时间
+		normalizer.parse("打印19日流水账单");// 抽取时间
 		TimeUnit[] unit = normalizer.getTimeUnit();
 		if (unit.length > 0) {
 			for (TimeUnit timeUnit : unit) {
@@ -513,6 +518,11 @@ public class TimeNormalizer implements Serializable {
 		} else {
 			System.err.println("未抽取到时间！");
 		}
+	}
+
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
 	}
 
 }

@@ -284,8 +284,14 @@ public class PeriodNormalizer {
 	 */
 	private List<TimeUnit> parseTime(String target) {
 
-		timeNormalizer = TimeNormalizer.getInstance(this.modelPath, false);
+		try {
+			timeNormalizer = (TimeNormalizer) TimeNormalizer.getInstance(this.modelPath, false).clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
 		// timeNormalizer.setPreferFuture(true);
+		// 默认时间段抽取结果为cmt系统
+		timeNormalizer.validateType = "cmt";
 		TimeUnit[] temp = timeNormalizer.parse(target);
 		return new ArrayList<>(Arrays.asList(temp));
 	}
