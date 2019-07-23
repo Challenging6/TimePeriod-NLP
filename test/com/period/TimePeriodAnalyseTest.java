@@ -253,6 +253,15 @@ public class TimePeriodAnalyseTest {
 
             periods = periodNormalizer.parse("大前天");
             Assert.assertEquals("2019-07-20 00:00:00 - 2019-07-20 23:59:59", periods.get(0).toString().trim());
+
+            periods = periodNormalizer.parse("2019，7月17");//Actual   :2019-07-01 00:00:00 - 2019-07-23 00:00:00
+            Assert.assertEquals("2019-07-17 00:00:00 - 2019-07-17 23:59:59", periods.get(0).toString().trim());
+
+            periods = periodNormalizer.parse("19年7月17");//Actual   :2019-07-01 00:00:00 - 2019-07-23 00:00:00
+            Assert.assertEquals("2019-07-17 00:00:00 - 2019-07-17 23:59:59", periods.get(0).toString().trim());
+
+            periods = periodNormalizer.parse("2019年7月17");//Actual   :2019-07-01 00:00:00 - 2019-07-23 00:00:00
+            Assert.assertEquals("2019-07-17 00:00:00 - 2019-07-17 23:59:59", periods.get(0).toString().trim());
         } catch (Exception e) {
             e.printStackTrace();
         }
