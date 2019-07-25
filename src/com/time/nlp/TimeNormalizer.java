@@ -50,6 +50,14 @@ public class TimeNormalizer implements Serializable, Cloneable {
 	// 校验系统类型
 	public String validateType;
 
+	public String getTarget() {
+		return target;
+	}
+
+	public void setTarget(String target) {
+		this.target = target;
+	}
+
 	protected TimeNormalizer() {
 		if (patterns == null) {
 			try {
@@ -359,6 +367,32 @@ public class TimeNormalizer implements Serializable, Cloneable {
 			String repStr = year + "年" + month + "月" + day + "日";
 			target = target.replace(matchedStr, repStr);
 		}
+		// 缺失时间补全
+		String informalTimePattern = "(?<year>(19|20|21)?[0-9]{2})(年|\\,|\\，)(?<month>([0-9]{1,2}))月(?<day>(0[1-9]|[1-2][0-9]|3[0-1])(日|号)?)";
+		Matcher infornalTimeMatcher = Pattern.compile(informalTimePattern).matcher(target);
+		while (infornalTimeMatcher.find()) {
+			String matchedStr = infornalTimeMatcher.group(0);
+			String year = infornalTimeMatcher.group("year");
+			if (year.length() == 2) {
+				// 长度为2的年份自动补全为20年
+				year = "20" + year;
+			}
+			String month = infornalTimeMatcher.group("month");
+			String day = infornalTimeMatcher.group("day");
+			String repStr = "";
+			if (matchedStr.endsWith("日") || matchedStr.endsWith("号")) {
+				repStr = year + "年" + month + "月" + day;
+			} else {
+				repStr = year + "年" + month + "月" + day + "日";
+			}
+			if (!repStr.equals("")) {
+				target = target.replace(matchedStr, repStr);
+			}
+		}
+//		// 处理最近半年
+//		if (target.contains("最近半年")) {
+//			target = target.replace("最近半年", "最近6个月");
+//		}
 		// 处理特殊时间
 		int i = 0;
 		for (SpTimeExp spTimeExp : SpTimeExp.values()) {
@@ -508,12 +542,12 @@ public class TimeNormalizer implements Serializable, Cloneable {
 		TimeNormalizer normalizer = TimeNormalizer.getInstance(url.toURI().toString());
 		normalizer.setPreferFuture(false);
 		System.out.println("系统类型：" + normalizer.validateType);
-		normalizer.parse("打印19日流水账单");// 抽取时间
+		normalizer.parse("打印最近六个月流水账单");// 抽取时间
 		TimeUnit[] unit = normalizer.getTimeUnit();
 		if (unit.length > 0) {
 			for (TimeUnit timeUnit : unit) {
 				System.out.println(DateUtil.formatDateDefault(timeUnit.getTime()) + "-" + timeUnit.getIsAllDayTime()
-						+ " " + timeUnit.Time_Norm);
+						+ " " + timeUnit.Time_Norm + " " + timeUnit.Time_Expression);
 			}
 		} else {
 			System.err.println("未抽取到时间！");
@@ -522,6 +556,7 @@ public class TimeNormalizer implements Serializable, Cloneable {
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
+		
 		return super.clone();
 	}
 

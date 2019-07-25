@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.sql.Time;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -103,6 +104,9 @@ public class PeriodNormalizer {
 		// 2. 需要时间点的时间段抽取
 		// 先对时间进行抽取， 再对相应位置进行标记(time1, time2...)替换，方便后边正则匹配。
 		times = parseTime(maskStr); // 抽取时间
+		if (!timeNormalizer.getTarget().contains("sptime")) {
+			target = timeNormalizer.getTarget();
+		}
 		maskStr = maskTime(target, times); // 标记时间
 
 		// System.out.println(Arrays.toString(times.toArray()));
@@ -410,7 +414,7 @@ public class PeriodNormalizer {
 		try {
 			periodNormalizer = PeriodNormalizer.getInstance(url.toURI().toString());
 			List<PeriodUnit> periods;
-			periods = periodNormalizer.parse("20190710");
+			periods = periodNormalizer.parse("最近6个月");
 			System.out.println(periods.get(0).toString().trim());
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
