@@ -1,13 +1,12 @@
 package com.period;
 
-import java.net.URL;
-import java.util.List;
-
+import com.time.nlp.TimeNormalizer;
+import com.time.nlp.TimeUnit;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.time.nlp.TimeNormalizer;
-import com.time.nlp.TimeUnit;
+import java.net.URL;
+import java.util.List;
 
 /**
  * @program: Time Period 基本功能测试
@@ -15,6 +14,7 @@ import com.time.nlp.TimeUnit;
  * @author: ChaiLinZheng
  * @create: 2019-06-03 23:19
  **/
+
 public class TimePeriodAnalyseTest {
 
     /*
@@ -172,14 +172,14 @@ public class TimePeriodAnalyseTest {
 
             // ！！！ 时间不是23:59:59，倒是不影响功能
             periods = periodNormalizer.parse("3月到7月");
-            Assert.assertEquals("2019-03-01 00:00:00 - 2019-07-19 00:00:00", periods.get(0).toString().trim());
+            Assert.assertEquals("2019-03-01 00:00:00 - 2019-07-23 00:00:00", periods.get(0).toString().trim());
 
             periods = periodNormalizer.parse("3月到8月");
             Assert.assertEquals("2018-03-01 00:00:00 - 2018-08-31 23:59:59", periods.get(0).toString().trim());
 
             // 解析到当天
             periods = periodNormalizer.parse("今年的");
-            Assert.assertEquals("2019-01-01 00:00:00 - 2019-07-19 00:00:00", periods.get(0).toString().trim());
+            Assert.assertEquals("2019-01-01 00:00:00 - 2019-07-23 00:00:00", periods.get(0).toString().trim());
 
             periods = periodNormalizer.parse("今年的6月");
             Assert.assertEquals("2019-06-01 00:00:00 - 2019-06-30 00:00:00", periods.get(0).toString().trim());
@@ -188,7 +188,7 @@ public class TimePeriodAnalyseTest {
             Assert.assertEquals("2019-11-01 00:00:00 - 2019-11-30 00:00:00", periods.get(0).toString().trim());
 
             periods = periodNormalizer.parse("这个月的");
-            Assert.assertEquals("2019-07-01 00:00:00 - 2019-07-19 00:00:00", periods.get(0).toString().trim());
+            Assert.assertEquals("2019-07-01 00:00:00 - 2019-07-23 00:00:00", periods.get(0).toString().trim());
 
             // 现在是2019年7月17日
             periods = periodNormalizer.parse("7月10日");
@@ -213,6 +213,55 @@ public class TimePeriodAnalyseTest {
             periods = periodNormalizer.parse("2019/07/10");
             Assert.assertEquals("2019-07-10 00:00:00 - 2019-07-10 23:59:59", periods.get(0).toString().trim());
 
+            //期望 最近半年
+            periods = periodNormalizer.parse("最近半年的");//IndexOutOfBoundsException
+            Assert.assertEquals("2019-01-23 00:00:00 - 2019-7-23 23:59:59", periods.get(0).toString().trim());
+
+            //期望 近半年
+            periods = periodNormalizer.parse("6个月"); //IndexOutOfBoundsException
+            Assert.assertEquals("2019-01-23 00:00:00 - 2019-7-23 23:59:59", periods.get(0).toString().trim());
+
+            periods = periodNormalizer.parse("最近一年");
+            Assert.assertEquals("2018-07-23 00:00:00 - 2019-07-23 00:00:00", periods.get(0).toString().trim());
+
+            periods = periodNormalizer.parse("2017年");
+            Assert.assertEquals("2017-01-01 00:00:00 - 2017-12-31 00:00:00", periods.get(0).toString().trim());
+
+            periods = periodNormalizer.parse("2018年1月1日至2018年12月31日");
+            Assert.assertEquals("2018-01-01 00:00:00 - 2018-12-31 00:00:00", periods.get(0).toString().trim());
+
+            periods = periodNormalizer.parse("2018年");
+            Assert.assertEquals("2018-01-01 00:00:00 - 2018-12-31 00:00:00", periods.get(0).toString().trim());
+
+            periods = periodNormalizer.parse("今天");
+            Assert.assertEquals("2019-07-23 00:00:00 - 2019-07-23 23:59:59", periods.get(0).toString().trim());
+
+            periods = periodNormalizer.parse("昨天");
+            Assert.assertEquals("2019-07-22 00:00:00 - 2019-07-22 23:59:59", periods.get(0).toString().trim());
+
+            //期望 明天
+            periods = periodNormalizer.parse("明天");//明天2019-06-24 00:00:00 - 2019-06-24 23:59:59
+            Assert.assertEquals("2019-07-24 00:00:00 - 2019-07-24 23:59:59", periods.get(0).toString().trim());
+
+            //期望 大后天
+            periods = periodNormalizer.parse("大后天");//2019-06-26 00:00:00 - 2019-06-26 23:59:59
+            Assert.assertEquals("2019-07-26 00:00:00 - 2019-07-26 23:59:59", periods.get(0).toString().trim());
+
+            //期望后天
+            periods = periodNormalizer.parse("后天");//2019-06-26 00:00:00 - 2019-06-26 23:59:59
+            Assert.assertEquals("2019-07-25 00:00:00 - 2019-07-25 23:59:59", periods.get(0).toString().trim());
+
+            periods = periodNormalizer.parse("大前天");
+            Assert.assertEquals("2019-07-20 00:00:00 - 2019-07-20 23:59:59", periods.get(0).toString().trim());
+
+            periods = periodNormalizer.parse("2019，7月17");//Actual   :2019-07-01 00:00:00 - 2019-07-23 00:00:00
+            Assert.assertEquals("2019-07-17 00:00:00 - 2019-07-17 23:59:59", periods.get(0).toString().trim());
+
+            periods = periodNormalizer.parse("19年7月17");//Actual   :2019-07-01 00:00:00 - 2019-07-23 00:00:00
+            Assert.assertEquals("2019-07-17 00:00:00 - 2019-07-17 23:59:59", periods.get(0).toString().trim());
+
+            periods = periodNormalizer.parse("2019年7月17");//Actual   :2019-07-01 00:00:00 - 2019-07-23 00:00:00
+            Assert.assertEquals("2019-07-17 00:00:00 - 2019-07-17 23:59:59", periods.get(0).toString().trim());
         } catch (Exception e) {
             e.printStackTrace();
         }
