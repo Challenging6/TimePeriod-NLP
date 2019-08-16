@@ -159,6 +159,22 @@ public class TimePeriodAnalyseTest {
             PeriodNormalizer periodNormalizer = PeriodNormalizer.getInstance(url.toURI().toString());
             List<PeriodUnit> periods;
 
+            // 当天为2019年8月16号
+            int year = 2019;
+            int month = 8;
+            int day = 16;
+            int yearMinus1 = year - 1;
+            int yearMinus2 = year - 2;
+            int yearMinus3 = year - 3;
+            int yearPlus1 = year + 1;
+            int monthMinus1 = month - 1;
+            int monthMinus2 = month - 2;
+            int monthPlus1 = month + 1;
+            int dayMinus1 = day - 1;
+            int dayMinus2 = day - 2;
+            int dayMinus3 = day - 3;
+            int dayPlus1 = day + 1;
+
             periods = periodNormalizer.parse("2019年1月10号到6月");
             Assert.assertEquals("2019-01-10 00:00:00 - 2019-06-30 23:59:59", periods.get(0).toString().trim());
 
@@ -173,14 +189,14 @@ public class TimePeriodAnalyseTest {
 
             // ！！！ 时间不是23:59:59，倒是不影响功能
             periods = periodNormalizer.parse("3月到7月");
-            Assert.assertEquals("2019-03-01 00:00:00 - 2019-07-25 00:00:00", periods.get(0).toString().trim());
+            Assert.assertEquals("2019-03-01 00:00:00 - 2019-07-31 23:59:59", periods.get(0).toString().trim());
 
             periods = periodNormalizer.parse("3月到8月");
-            Assert.assertEquals("2018-03-01 00:00:00 - 2018-08-31 23:59:59", periods.get(0).toString().trim());
+            Assert.assertEquals("2019-03-01 00:00:00 - 2019-08-" + day + " 00:00:00", periods.get(0).toString().trim());
 
             // 解析到当天
             periods = periodNormalizer.parse("今年的");
-            Assert.assertEquals("2019-01-01 00:00:00 - 2019-07-25 00:00:00", periods.get(0).toString().trim());
+            Assert.assertEquals("2019-01-01 00:00:00 - 2019-0" + month + "-" + day + " 00:00:00", periods.get(0).toString().trim());
 
             periods = periodNormalizer.parse("今年的6月");
             Assert.assertEquals("2019-06-01 00:00:00 - 2019-06-30 00:00:00", periods.get(0).toString().trim());
@@ -189,15 +205,15 @@ public class TimePeriodAnalyseTest {
             Assert.assertEquals("2019-11-01 00:00:00 - 2019-11-30 00:00:00", periods.get(0).toString().trim());
 
             periods = periodNormalizer.parse("这个月的");
-            Assert.assertEquals("2019-07-01 00:00:00 - 2019-07-25 00:00:00", periods.get(0).toString().trim());
+            Assert.assertEquals("2019-0" + month + "-01 00:00:00 - 2019-0" + month + "-" + day + " 00:00:00", periods.get(0).toString().trim());
 
             // 现在是2019年7月17日
             periods = periodNormalizer.parse("7月10日");
             Assert.assertEquals("2019-07-10 00:00:00 - 2019-07-10 23:59:59", periods.get(0).toString().trim());
 
             // 未来的时间，解析为上一年
-            periods = periodNormalizer.parse("7月30日");
-            Assert.assertEquals("2018-07-30 00:00:00 - 2018-07-30 23:59:59", periods.get(0).toString().trim());
+            periods = periodNormalizer.parse(monthPlus1 + "月" + dayPlus1 + "日");
+            Assert.assertEquals("2018-0" + monthPlus1 + "-" + dayPlus1 + " 00:00:00 - 2018-0" + monthPlus1 + "-" + dayPlus1 + " 23:59:59", periods.get(0).toString().trim());
 
             periods = periodNormalizer.parse("20190710");
             Assert.assertEquals("2019-07-10 00:00:00 - 2019-07-10 23:59:59", periods.get(0).toString().trim());
@@ -223,7 +239,7 @@ public class TimePeriodAnalyseTest {
 //            Assert.assertEquals("2019-01-25 00:00:00 - 2019-07-25 00:00:00", periods.get(0).toString().trim());
 
             periods = periodNormalizer.parse("最近一年");
-            Assert.assertEquals("2018-07-25 00:00:00 - 2019-07-25 00:00:00", periods.get(0).toString().trim());
+            Assert.assertEquals("2018-0" + month+ "-" + day + " 00:00:00 - 2019-0"  + month+ "-" + day + " 00:00:00", periods.get(0).toString().trim());
 
             periods = periodNormalizer.parse("2017年");
             Assert.assertEquals("2017-01-01 00:00:00 - 2017-12-31 00:00:00", periods.get(0).toString().trim());
@@ -235,10 +251,10 @@ public class TimePeriodAnalyseTest {
             Assert.assertEquals("2018-01-01 00:00:00 - 2018-12-31 00:00:00", periods.get(0).toString().trim());
 
             periods = periodNormalizer.parse("今天");
-            Assert.assertEquals("2019-07-25 00:00:00 - 2019-07-25 23:59:59", periods.get(0).toString().trim());
+            Assert.assertEquals("2019-0"  + month+ "-" + day +  " 00:00:00 - 2019-0" + month+ "-" + day + " 23:59:59", periods.get(0).toString().trim());
 
             periods = periodNormalizer.parse("昨天");
-            Assert.assertEquals("2019-07-24 00:00:00 - 2019-07-24 23:59:59", periods.get(0).toString().trim());
+            Assert.assertEquals("2019-0"  + month+ "-" + dayMinus1 +  " 00:00:00 - 2019-0" + month+ "-" + dayMinus1 + " 23:59:59", periods.get(0).toString().trim());
 
 //            //期望 明天
 //            periods = periodNormalizer.parse("明天");//明天2019-06-24 00:00:00 - 2019-06-24 23:59:59
@@ -253,7 +269,7 @@ public class TimePeriodAnalyseTest {
 //            Assert.assertEquals("2019-07-25 00:00:00 - 2019-07-25 23:59:59", periods.get(0).toString().trim());
 
             periods = periodNormalizer.parse("大前天");
-            Assert.assertEquals("2019-07-22 00:00:00 - 2019-07-22 23:59:59", periods.get(0).toString().trim());
+            Assert.assertEquals("2019-0"  + month+ "-" + dayMinus3 +  " 00:00:00 - 2019-0" + month+ "-" + dayMinus3 + " 23:59:59", periods.get(0).toString().trim());
 
             periods = periodNormalizer.parse("2019，7月17");//Actual   :2019-07-01 00:00:00 - 2019-07-23 00:00:00
             Assert.assertEquals("2019-07-17 00:00:00 - 2019-07-17 23:59:59", periods.get(0).toString().trim());
@@ -275,71 +291,114 @@ public class TimePeriodAnalyseTest {
 
             TimeNormalizer timeNormalizer = TimeNormalizer.getInstance(url.toURI().toString(), false);
 
-            TimeUnit[] parse = timeNormalizer.parse("2日");
-            Assert.assertEquals("2日 ---> 2019年7月2日", parse[0].toString());
+            // 当天为2019年8月16号
+            int year = 2019;
+            int month = 8;
+            int day = 16;
+            int yearMinus1 = year - 1;
+            int yearMinus2 = year - 2;
+            int yearMinus3 = year - 3;
+            int yearPlus1 = year + 1;
+            int monthMinus1 = month - 1;
+            int monthMinus2 = month - 2;
+            int monthPlus1 = month + 1;
+            int dayMinus1 = day - 1;
+            int dayMinus2 = day - 2;
+            int dayMinus3 = day - 3;
+            int dayPlus1 = day + 1;
 
-            parse = timeNormalizer.parse("26日");
-            Assert.assertEquals("26日 ---> 2019年6月26日", parse[0].toString());
+            // 未来日 -> 上个月的该日
+            TimeUnit[] parse = timeNormalizer.parse(dayPlus1 + "日");
+            Assert.assertEquals(dayPlus1 + "日 ---> " + year + "年" + monthMinus1 + "月" + dayPlus1 + "日", parse[0].toString());
 
-            parse = timeNormalizer.parse("25日");
-            Assert.assertEquals("25日 ---> 2019年6月25日", parse[0].toString());
+            // 当日 -> 上个月的该日
+            parse = timeNormalizer.parse(day + "日");
+            Assert.assertEquals(day + "日 ---> " + year + "年" + monthMinus1 + "月" + day + "日", parse[0].toString());
 
-            parse = timeNormalizer.parse("6月");
-            Assert.assertEquals("6月 ---> 2019年6月", parse[0].toString());
+            // 过去日 -> 当月的过去日
+            parse = timeNormalizer.parse(dayMinus1 + "日");
+            Assert.assertEquals(dayMinus1 + "日 ---> " + year + "年" + month + "月" + dayMinus1 + "日", parse[0].toString());
 
-            parse = timeNormalizer.parse("8月");
-            Assert.assertEquals("8月 ---> 2018年8月", parse[0].toString());
+            // 未来月 -> 去年的该月
+            parse = timeNormalizer.parse(monthPlus1 + "月");
+            Assert.assertEquals(monthPlus1 + "月 ---> " + yearMinus1 + "年" + monthPlus1 + "月", parse[0].toString());
 
-            parse = timeNormalizer.parse("7月");
-            Assert.assertEquals("7月 ---> 2018年7月", parse[0].toString());
+            // 当月 -> 去年的该月
+            parse = timeNormalizer.parse(month + "月");
+            Assert.assertEquals(month + "月 ---> " + yearMinus1 + "年" + month + "月", parse[0].toString());
 
-            parse = timeNormalizer.parse("7月2日");
-            Assert.assertEquals("7月2日 ---> 2019年7月2日", parse[0].toString());
+            // 过去月 -> 当前年的该月
+            parse = timeNormalizer.parse(monthMinus1 + "月");
+            Assert.assertEquals(monthMinus1 + "月 ---> " + year + "年" + monthMinus1 + "月", parse[0].toString());
 
-            parse = timeNormalizer.parse("7月25日");
-            Assert.assertEquals("7月25日 ---> 2018年7月25日", parse[0].toString());
+            // 未来月日 -> 上一年的该月日
+            parse = timeNormalizer.parse(monthPlus1 + "月" + dayPlus1 + "日");
+            Assert.assertEquals(monthPlus1 + "月" + dayPlus1 + "日 ---> " + yearMinus1 + "年" + monthPlus1 + "月" + dayPlus1 + "日", parse[0].toString());
 
-            parse = timeNormalizer.parse("7月26日");
-            Assert.assertEquals("7月26日 ---> 2018年7月26日", parse[0].toString());
+            // 当前月日 -> 上一年的该月日
+            parse = timeNormalizer.parse(month + "月" + day + "日");
+            Assert.assertEquals(month + "月" + day + "日 ---> " + yearMinus1 + "年" + month + "月" + day + "日", parse[0].toString());
+
+            // 过去的月日 -> 当前年的该月日
+            parse = timeNormalizer.parse(monthMinus1 + "月" + dayMinus1 + "日");
+            Assert.assertEquals(monthMinus1 + "月" + dayMinus1 + "日 ---> " + year + "年" + monthMinus1 + "月" + dayMinus1 + "日", parse[0].toString());
 
             parse = timeNormalizer.parse("去年的");
-            Assert.assertEquals("去年 ---> 2018年", parse[0].toString());
+            Assert.assertEquals("去年 ---> " + yearMinus1 + "年", parse[0].toString());
 
             parse = timeNormalizer.parse("上一年");
-            Assert.assertEquals("上一年 ---> 2018年", parse[0].toString());
+            Assert.assertEquals("上一年 ---> " + yearMinus1 + "年", parse[0].toString());
 
             parse = timeNormalizer.parse("前年");
-            Assert.assertEquals("前年 ---> 2017年", parse[0].toString());
+            Assert.assertEquals("前年 ---> " + yearMinus2 + "年", parse[0].toString());
 
             parse = timeNormalizer.parse("上上一年");
-            Assert.assertEquals("上上一年 ---> 2017年", parse[0].toString());
+            Assert.assertEquals("上上一年 ---> " + yearMinus2 + "年", parse[0].toString());
 
             parse = timeNormalizer.parse("大前年");
-            Assert.assertEquals("大前年 ---> 2016年", parse[0].toString());
+            Assert.assertEquals("大前年 ---> " + yearMinus3 + "年", parse[0].toString());
 
             parse = timeNormalizer.parse("昨天");
-            Assert.assertEquals("昨天 ---> 2019年7月24日", parse[0].toString());
+            Assert.assertEquals("昨天 ---> " + year + "年" + month + "月" + dayMinus1 + "日", parse[0].toString());
 
             parse = timeNormalizer.parse("昨日");
-            Assert.assertEquals("昨日 ---> 2019年7月24日", parse[0].toString());
+            Assert.assertEquals("昨日 ---> " + year + "年" + month + "月" + dayMinus1 + "日", parse[0].toString());
 
             parse = timeNormalizer.parse("前天");
-            Assert.assertEquals("前天 ---> 2019年7月23日", parse[0].toString());
+            Assert.assertEquals("前天 ---> " + year + "年" + month + "月" + dayMinus2 + "日", parse[0].toString());
 
             parse = timeNormalizer.parse("大前天");
-            Assert.assertEquals("大前天 ---> 2019年7月22日", parse[0].toString());
+            Assert.assertEquals("大前天 ---> " + year + "年" + month + "月" + dayMinus3 + "日", parse[0].toString());
 
             parse = timeNormalizer.parse("上上日");
-            Assert.assertEquals("上上日 ---> 2019年7月23日", parse[0].toString());
+            Assert.assertEquals("上上日 ---> " + year + "年" + month + "月" + dayMinus2 + "日", parse[0].toString());
 
             parse = timeNormalizer.parse("上一月");
-            Assert.assertEquals("上一月 ---> 2019年6月", parse[0].toString());
+            Assert.assertEquals("上一月 ---> " + year + "年" + monthMinus1 + "月", parse[0].toString());
 
             parse = timeNormalizer.parse("上上个月");
-            Assert.assertEquals("上上个月 ---> 2019年5月", parse[0].toString());
+            Assert.assertEquals("上上个月 ---> " +year + "年" + monthMinus2 + "月", parse[0].toString());
 
             parse = timeNormalizer.parse("上上月");
-            Assert.assertEquals("上上月 ---> 2019年5月", parse[0].toString());
+            Assert.assertEquals("上上月 ---> " + year + "年" + monthMinus2 + "月", parse[0].toString());
+
+            parse = timeNormalizer.parse("去年底");
+            Assert.assertEquals("去年底 ---> " + yearMinus1 + "年" + "12月", parse[0].toString());
+
+            parse = timeNormalizer.parse("去年3月");
+            Assert.assertEquals("去年3月 ---> " + yearMinus1 + "年" + "3月", parse[0].toString());
+
+            parse = timeNormalizer.parse("上一年3月");
+            Assert.assertEquals("上一年3月 ---> " + yearMinus1 + "年" + "3月", parse[0].toString());
+
+            parse = timeNormalizer.parse("前年3月");
+            Assert.assertEquals("前年3月 ---> " + yearMinus2 + "年" + "3月", parse[0].toString());
+
+            parse = timeNormalizer.parse("上上一年3月");
+            Assert.assertEquals("上上一年3月 ---> " + yearMinus2 + "年" + "3月", parse[0].toString());
+
+            parse = timeNormalizer.parse("大前年3月");
+            Assert.assertEquals("大前年3月 ---> " + yearMinus3 + "年" + "3月", parse[0].toString());
 
         } catch (Exception e) {
             e.printStackTrace();
