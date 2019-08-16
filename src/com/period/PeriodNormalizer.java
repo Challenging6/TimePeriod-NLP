@@ -8,6 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,6 +43,10 @@ public class PeriodNormalizer {
 			try {
 				timeNormalizer = (TimeNormalizer) TimeNormalizer.getInstance(this.modelPath, false).clone();
 				timeNormalizer.validateType = "cmt";
+				// 初始化基准时间
+				String timeBase = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
+				timeNormalizer.setTimeBase(timeBase);
+				timeNormalizer.setOldTimeBase(timeBase);
 			} catch (CloneNotSupportedException e) {
 				e.printStackTrace();
 			}
@@ -103,6 +109,9 @@ public class PeriodNormalizer {
 		// 2. 需要时间点的时间段抽取
 		// 先对时间进行抽取， 再对相应位置进行标记(time1, time2...)替换，方便后边正则匹配。
 		times = parseTime(maskStr); // 抽取时间
+		if (!timeNormalizer.getTarget().contains("sptime")) {
+			target = timeNormalizer.getTarget();
+		}
 		maskStr = maskTime(target, times); // 标记时间
 
 		// System.out.println(Arrays.toString(times.toArray()));
@@ -121,6 +130,11 @@ public class PeriodNormalizer {
 	 * @description 过去的一段时间点至今 (最近五月, 近3年)
 	 */
 	private String lastTimeExtract(String originStr, List<PeriodUnit> periods) {
+		// 对最近半年做特殊处理
+//		处理最近半年
+		if (originStr.contains("最近半年")) {
+			originStr = originStr.replace("最近半年", "最近6个月");
+		}
 		/**
 		 * 先匹配不需要时间抽取的(近5年,近3月, 近一周)
 		 */
@@ -410,7 +424,7 @@ public class PeriodNormalizer {
 		try {
 			periodNormalizer = PeriodNormalizer.getInstance(url.toURI().toString());
 			List<PeriodUnit> periods;
-			periods = periodNormalizer.parse("20190710");
+			periods = periodNormalizer.parse("最近半年");
 			System.out.println(periods.get(0).toString().trim());
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
