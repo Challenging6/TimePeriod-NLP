@@ -75,6 +75,7 @@ public class TimeUnit {
 
 	public TimeUnit(String exp_time, TimeNormalizer n, TimePoint contextTp) {
 		// 还原特殊时间指代
+        //System.out.println(exp_time);
 		exp_time = recoverSpTime(exp_time);
 		Time_Expression = exp_time;
 		normalizer = n;
@@ -892,6 +893,11 @@ public class TimeUnit {
 		norm_setTotal();
 		modifyTimeBase();
 
+		//System.out.println(Time_Expression);
+		if (Time_Expression.contains("年底")) {
+            _tp.tunit[1] = 12;
+        }
+
 		_tp_origin.tunit = _tp.tunit.clone();
 
 		String[] time_grid = new String[6];
@@ -1175,7 +1181,9 @@ public class TimeUnit {
 			secondNum = Integer.parseInt(matcher.group("second"));
 		}
 		if (firstNum != -1 && secondNum != -1) {
-			return SpTimeExp.values()[firstNum].getExps()[secondNum];
+		    String spTimeStr = SpTimeExp.values()[firstNum].getExps()[secondNum];
+            exp_time = matcher.replaceFirst(spTimeStr);
+			return exp_time;
 		}
 		return exp_time;
 	}

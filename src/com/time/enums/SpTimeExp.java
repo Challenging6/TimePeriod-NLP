@@ -33,7 +33,7 @@ public enum SpTimeExp {
 	LAST_LAST_YEAR(new String[] { "前年", "上上一年" }),
 
 	// 去年（上一年）
-	LAST_YEAR(new String[] { "去年", "前一年", "上一年" });
+	LAST_YEAR(new String[] {"去年底", "去年", "前一年", "上一年" });
 
 	private String[] exps;
 

@@ -119,7 +119,6 @@ public class PeriodNormalizer {
 		timePointToNow(maskStr, periods, times);
 		twoTimeExtract(maskStr, periods, times);
 		oneTimePointExtract(maskStr, periods, times);
-
 	}
 
 	/**
@@ -205,6 +204,8 @@ public class PeriodNormalizer {
 			}
 		}
 	}
+
+
 
 	/**
 	 * @author LinZheng Chai

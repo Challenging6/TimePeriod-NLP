@@ -311,6 +311,10 @@ public class TimeNormalizer implements Serializable, Cloneable {
 		return oldTimeBase;
 	}
 
+	public void setOldTimeBase(String oldTimeBase){
+	    this.oldTimeBase = oldTimeBase;
+    }
+
 	public boolean isPreferFuture() {
 		return isPreferFuture;
 	}
@@ -405,6 +409,20 @@ public class TimeNormalizer implements Serializable, Cloneable {
 			}
 			i++;
 		}
+//        Pattern pattern1;
+//        Matcher matcher1;
+//        for (SpTimeExp spTimeExp : SpTimeExp.values()) {
+//            for (int j = 0; j < spTimeExp.getExps().length; j++) {
+//                String timeExp = spTimeExp.getExps()[j];
+//                //pattern1 = Pattern.compile(timeExp);
+//                //matcher1 = pattern1.matcher(target);
+//                if (target.contains(timeExp)) {
+//                    String repStr = "#sptime" + i + "#" + j + "#";
+//                    target = target.replaceAll(timeExp, repStr);
+//                }
+//            }
+//            i++;
+//        }
 		// 大写数字转化
 		target = stringPreHandlingModule.numberTranslator(target);
 		// TODO 处理大小写标点符号
@@ -456,6 +474,7 @@ public class TimeNormalizer implements Serializable, Cloneable {
 		/** 时间上下文： 前一个识别出来的时间会是下一个时间的上下文，用于处理：周六3点到5点这样的多个时间的识别，第二个5点应识别到是周六的。 */
 		TimePoint contextTp = new TimePoint();
 		for (int j = 0; j < rpointer; j++) {
+		    //System.out.println(temp[j]);
 			Time_Result[j] = new TimeUnit(temp[j], this, contextTp);
 			contextTp = Time_Result[j]._tp;
 		}

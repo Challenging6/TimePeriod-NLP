@@ -294,7 +294,7 @@ public class TimePeriodAnalyseTest {
             // 当天为2019年8月16号
             int year = 2019;
             int month = 8;
-            int day = 16;
+            int day = 19;
             int yearMinus1 = year - 1;
             int yearMinus2 = year - 2;
             int yearMinus3 = year - 3;
@@ -348,7 +348,6 @@ public class TimePeriodAnalyseTest {
 
             parse = timeNormalizer.parse("上一年");
             Assert.assertEquals("上一年 ---> " + yearMinus1 + "年", parse[0].toString());
-
             parse = timeNormalizer.parse("前年");
             Assert.assertEquals("前年 ---> " + yearMinus2 + "年", parse[0].toString());
 
