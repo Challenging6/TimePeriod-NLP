@@ -162,7 +162,7 @@ public class TimePeriodAnalyseTest {
             // 当天为2019年9月16号
             int year = 2019;
             int month = 9;
-            int day = 16;
+            int day = 17;
             int yearMinus1 = year - 1;
             int yearMinus2 = year - 2;
             int yearMinus3 = year - 3;

@@ -538,6 +538,7 @@ public class TimeNormalizer implements Serializable, Cloneable {
 		String rootPath = FileUtil.getResourceAbsPath();
 		// 全局配置的绝对路径
 		String filePath = rootPath.concat("TimeExp.txt");
+		filePath = "C:/Users/Challenging/Desktop/NLPLearning/TimePeriod-NLP/target/classes/TimeExp.txt";
 		String pattern = FileUtil.readAllLinesOrExit(Paths.get(filePath)).get(0);
 		// 修改模型
 		String path = TimeNormalizer.class.getResource("").getPath();
@@ -561,7 +562,7 @@ public class TimeNormalizer implements Serializable, Cloneable {
 		TimeNormalizer normalizer = TimeNormalizer.getInstance(url.toURI().toString());
 		normalizer.setPreferFuture(false);
 		System.out.println("系统类型：" + normalizer.validateType);
-		normalizer.parse("打印最近六个月流水账单");// 抽取时间
+		normalizer.parse("2019年07月17");// 抽取时间
 		TimeUnit[] unit = normalizer.getTimeUnit();
 		if (unit.length > 0) {
 			for (TimeUnit timeUnit : unit) {
