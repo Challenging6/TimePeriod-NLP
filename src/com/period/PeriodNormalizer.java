@@ -114,7 +114,7 @@ public class PeriodNormalizer {
 		}
 		maskStr = maskTime(target, times); // 标记时间
 
-		// System.out.println(Arrays.toString(times.toArray()));
+		//System.out.println(Arrays.toString(times.toArray()));
 
 		timePointToNow(maskStr, periods, times);
 		twoTimeExtract(maskStr, periods, times);
