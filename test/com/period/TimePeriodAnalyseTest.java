@@ -159,9 +159,9 @@ public class TimePeriodAnalyseTest {
             PeriodNormalizer periodNormalizer = PeriodNormalizer.getInstance(url.toURI().toString());
             List<PeriodUnit> periods;
 
-            // 当天为2019年8月16号
+            // 当天为2019年9月16号
             int year = 2019;
-            int month = 8;
+            int month = 9;
             int day = 16;
             int yearMinus1 = year - 1;
             int yearMinus2 = year - 2;
@@ -192,7 +192,7 @@ public class TimePeriodAnalyseTest {
             Assert.assertEquals("2019-03-01 00:00:00 - 2019-07-31 23:59:59", periods.get(0).toString().trim());
 
             periods = periodNormalizer.parse("3月到8月");
-            Assert.assertEquals("2019-03-01 00:00:00 - 2019-08-" + day + " 00:00:00", periods.get(0).toString().trim());
+            Assert.assertEquals("2019-03-01 00:00:00 - 2019-08-31 23:59:59", periods.get(0).toString().trim());
 
             // 解析到当天
             periods = periodNormalizer.parse("今年的");
@@ -213,7 +213,7 @@ public class TimePeriodAnalyseTest {
 
             // 未来的时间，解析为上一年
             periods = periodNormalizer.parse(monthPlus1 + "月" + dayPlus1 + "日");
-            Assert.assertEquals("2018-0" + monthPlus1 + "-" + dayPlus1 + " 00:00:00 - 2018-0" + monthPlus1 + "-" + dayPlus1 + " 23:59:59", periods.get(0).toString().trim());
+            Assert.assertEquals("2018-" + monthPlus1 + "-" + dayPlus1 + " 00:00:00 - 2018-" + monthPlus1 + "-" + dayPlus1 + " 23:59:59", periods.get(0).toString().trim());
 
             periods = periodNormalizer.parse("20190710");
             Assert.assertEquals("2019-07-10 00:00:00 - 2019-07-10 23:59:59", periods.get(0).toString().trim());
@@ -279,6 +279,16 @@ public class TimePeriodAnalyseTest {
 
             periods = periodNormalizer.parse("2019年7月17");//Actual   :2019-07-01 00:00:00 - 2019-07-23 00:00:00
             Assert.assertEquals("2019-07-17 00:00:00 - 2019-07-17 23:59:59", periods.get(0).toString().trim());
+
+            periods = periodNormalizer.parse("2019年11月17");//Actual   :2019-07-01 00:00:00 - 2019-07-23 00:00:00
+            Assert.assertEquals("2019-11-17 00:00:00 - 2019-11-17 23:59:59", periods.get(0).toString().trim());
+
+            periods = periodNormalizer.parse("2018年11月17");//Actual   :2019-07-01 00:00:00 - 2019-07-23 00:00:00
+            Assert.assertEquals("2018-11-17 00:00:00 - 2018-11-17 23:59:59", periods.get(0).toString().trim());
+
+            periods = periodNormalizer.parse("2019年07月17");//Actual   :2019-07-01 00:00:00 - 2019-07-23 00:00:00
+            Assert.assertEquals("2019-07-17 00:00:00 - 2019-07-17 23:59:59", periods.get(0).toString().trim());
+
         } catch (Exception e) {
             e.printStackTrace();
         }
