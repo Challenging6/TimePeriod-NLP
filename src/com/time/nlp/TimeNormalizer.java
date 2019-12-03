@@ -355,7 +355,7 @@ public class TimeNormalizer implements Serializable, Cloneable {
 		target = stringPreHandlingModule.delKeyword(target, "\\s+"); // 清理空白符
 		target = stringPreHandlingModule.delKeyword(target, "[的]+"); // 清理语气助词
 		// 时间表表达格式标准化
-		String pattern = "(?<year>(19|20|21)[0-9]{2})[\\.\\。\\-\\/]?(?<month>(0[1-9]|1[0-1]))[\\.\\。\\-\\/]?(?<day>(0[1-9]|[1-2][0-9]|3[0-1]))";
+		String pattern = "(?<year>(19|20|21)[0-9]{2})[\\.\\。\\-\\/]?(?<month>(0[1-9]|1[0-2]))[\\.\\。\\-\\/]?(?<day>(0[1-9]|[1-2][0-9]|3[0-1]))";
 		Matcher matcher = Pattern.compile(pattern).matcher(target);
 		while (matcher.find()) {
 			String matchedStr = matcher.group(0);
@@ -556,13 +556,13 @@ public class TimeNormalizer implements Serializable, Cloneable {
 
 	public static void main(String args[]) throws Exception {
 		// 重写模型
-		TimeNormalizer.reWriteModel();
+//		TimeNormalizer.reWriteModel();
 		// 测试
 		URL url = TimeNormalizer.class.getResource("/TimeExp.m");
 		TimeNormalizer normalizer = TimeNormalizer.getInstance(url.toURI().toString());
 		normalizer.setPreferFuture(false);
 		System.out.println("系统类型：" + normalizer.validateType);
-		normalizer.parse("2019年07月17");// 抽取时间
+		normalizer.parse("20191203");// 抽取时间
 		TimeUnit[] unit = normalizer.getTimeUnit();
 		if (unit.length > 0) {
 			for (TimeUnit timeUnit : unit) {
