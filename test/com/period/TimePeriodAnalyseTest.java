@@ -409,6 +409,13 @@ public class TimePeriodAnalyseTest {
             parse = timeNormalizer.parse("大前年3月");
             Assert.assertEquals("大前年3月 ---> " + yearMinus3 + "年" + "3月", parse[0].toString());
 
+            //新增 20191203  这种格式的 12月的解析不出。
+            parse = timeNormalizer.parse("20200103");
+            Assert.assertEquals("2020年1月3日 ---> 2020年1月3日", parse[0].toString());
+            parse = timeNormalizer.parse("20191203");
+            Assert.assertEquals("20191203 ---> 2019年12月03日", parse[0].toString());
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
